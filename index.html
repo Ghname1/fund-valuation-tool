@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基金估值查询</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3b82f6',
+            secondary: '#64748b',
+            success: '#10b981',
+            danger: '#ef4444',
+            warning: '#f59e0b',
+            light: '#f8fafc',
+            dark: '#1e293b',
+            up: '#ef4444',
+            down: '#10b981',
+            flat: '#64748b'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:border-l-4 hover:border-primary;
+      }
+      .tab-active {
+        @apply border-b-2 border-primary text-primary font-medium;
+      }
+      .btn {
+        @apply px-4 py-2 rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+      }
+      .btn-primary {
+        @apply bg-primary text-white hover:bg-primary/90 focus:ring-primary/50;
+      }
+      .btn-secondary {
+        @apply bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary/50;
+      }
+      .btn-danger {
+        @apply bg-danger text-white hover:bg-danger/90 focus:ring-danger/50;
+      }
+      .input {
+        @apply px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-200;
+      }
+      .modal-enter {
+        @apply opacity-0 scale-95;
+      }
+      .modal-enter-active {
+        @apply opacity-100 scale-100 transition-all duration-300;
+      }
+      .modal-exit {
+        @apply opacity-100 scale-100;
+      }
+      .modal-exit-active {
+        @apply opacity-0 scale-95 transition-all duration-300;
+      }
+      .fade-enter {
+        @apply opacity-0;
+      }
+      .fade-enter-active {
+        @apply opacity-100 transition-opacity duration-300;
+      }
+      .fade-exit {
+        @apply opacity-100;
+      }
+      .fade-exit-active {
+        @apply opacity-0 transition-opacity duration-300;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+  <!-- 顶部导航 -->
+  <header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center mb-4">
+        <button id="back-btn" class="px-3 py-1 rounded-md text-sm font-medium bg-secondary text-white hover:bg-secondary/90 hidden" onclick="goBack()">
+          <i class="fa fa-arrow-left mr-1"></i>返回
+        </button>
+        <h1 class="text-2xl font-bold text-center text-primary flex-1">基金估值查询</h1>
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" class="p-2 rounded-md hover:bg-gray-200" onclick="toggleTheme()" title="切换主题">
+            <i class="fa fa-sun-o"></i>
+          </button>
+        </div>
+      </div>
+      <p class="text-center text-gray-500 mt-1">实时查询基金估值，管理你的投资组合</p>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- 选项卡 -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button id="tab-query" class="tab-active px-6 py-3 text-sm font-medium" onclick="switchTab('query')">
+        估值查询
+      </button>
+      <button id="tab-position" class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('position')">
+        我的持仓
+      </button>
+      <button id="tab-ranking" class="px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('ranking')">
+        涨跌榜
+      </button>
+    </div>
+
+    <!-- 估值查询面板 -->
+    <div id="panel-query" class="fade-enter-active">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+          <input
+            type="text"
+            id="fund-code"
+            class="input flex-1"
+            placeholder="请输入基金代码或基金名称"
+          >
+          <button id="query-btn" class="btn btn-primary whitespace-nowrap" onclick="queryFund()">
+            <i class="fa fa-search mr-2"></i>查询估值
+          </button>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">支持6位数字基金代码或基金名称查询，如：000001 或 华夏成长混合</p>
+      </div>
+
+      <!-- 查询结果 -->
+      <div id="query-result" class="hidden">
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold" id="fund-name"></h2>
+            <span class="text-sm text-gray-500" id="fund-code-display"></span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-500">单位净值</p>
+              <p class="text-xl font-medium" id="net-value"></p>
+              <p class="text-xs text-gray-400" id="nav-date"></p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-500">实时估值</p>
+              <p class="text-xl font-medium" id="estimate-value"></p>
+              <p class="text-xs text-gray-400">估值时间：<span id="estimate-time"></span></p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-500">日涨跌幅</p>
+              <p class="text-xl font-medium" id="day-change"></p>
+              <p class="text-xs text-gray-400">估值涨幅仅供参考</p>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end">
+            <button class="btn btn-secondary" onclick="showAddPositionModal()">
+              <i class="fa fa-plus mr-2"></i>添加到持仓
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 加载状态 -->
+      <div id="loading" class="hidden bg-white rounded-lg shadow-sm p-6 mb-6 flex justify-center items-center">
+        <i class="fa fa-spinner fa-spin text-primary text-xl mr-3"></i>
+        <span>正在查询基金估值...</span>
+      </div>
+
+      <!-- 错误提示 -->
+      <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="flex">
+          <i class="fa fa-exclamation-circle text-red-500 mt-0.5 mr-3"></i>
+          <div>
+            <h3 class="text-sm font-medium text-red-800">查询失败</h3>
+            <p class="text-sm text-red-700 mt-1" id="error-message"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 我的持仓面板 -->
+    <div id="panel-position" class="hidden fade-enter">
+      <!-- 持仓概览 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-semibold mb-4">持仓概览</h2>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="text-center">
+              <p class="text-sm text-gray-500">总持仓</p>
+              <p class="text-xl font-medium" id="total-positions">0</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">上涨</p>
+              <p class="text-xl font-medium text-up" id="up-count">0</p>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-gray-500">下跌</p>
+              <p class="text-xl font-medium text-down" id="down-count">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-semibold mb-4">收益统计</h2>
+          <div class="grid grid-cols-1 gap-3">
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-500">当日收益</span>
+              <span class="font-medium" id="today-profit">¥0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-500">持有收益</span>
+              <span class="font-medium" id="hold-profit">¥0.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-sm text-gray-500">整体收益率</span>
+              <span class="font-medium" id="total-rate">0.00%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">持仓列表</h2>
+        <div class="flex gap-2">
+          <button class="btn btn-secondary" onclick="showAddPositionModal()">
+            <i class="fa fa-plus mr-2"></i>添加持仓
+          </button>
+          <button class="btn btn-primary" onclick="refreshAllPositions()">
+            <i class="fa fa-refresh mr-2"></i>刷新估值
+          </button>
+          <button class="btn btn-danger" onclick="batchDeletePositions()" id="batch-delete-btn" disabled>
+            <i class="fa fa-trash mr-2"></i>批量删除
+          </button>
+          <button class="btn btn-primary" onclick="shareApp()">
+            <i class="fa fa-share-alt mr-2"></i>分享
+          </button>
+        </div>
+      </div>
+
+      <!-- 排序控制 -->
+      <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+        <div class="flex flex-wrap gap-4">
+          <div class="flex items-center">
+            <span class="text-sm text-gray-500 mr-2">排序：</span>
+            <select id="sort-by" class="input text-sm" onchange="sortPositions()">
+              <option value="default">默认</option>
+              <option value="dayChange">当日涨幅</option>
+              <option value="todayProfit">当日收益</option>
+              <option value="holdProfit">持有收益</option>
+            </select>
+          </div>
+          <div class="flex items-center">
+            <span class="text-sm text-gray-500 mr-2">顺序：</span>
+            <select id="sort-order" class="input text-sm" onchange="sortPositions()">
+              <option value="desc">降序</option>
+              <option value="asc">升序</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 持仓列表 -->
+      <div id="position-list" class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input type="checkbox" id="select-all-checkbox" onchange="selectAllPositions(this.checked)">
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">基金名称</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">基金代码</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">持仓份额</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">成本价</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">交易时间</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">持有日</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">估值</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日涨跌幅</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">当日收益</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">持有收益</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200" id="position-table-body">
+            <!-- 持仓数据将通过JS动态添加 -->
+          </tbody>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <!-- 空状态 -->
+            <tr id="empty-position">
+              <td colspan="12" class="px-6 py-12 text-center text-gray-500">
+                <i class="fa fa-inbox text-3xl mb-2"></i>
+                <p>暂无持仓数据</p>
+                <p class="text-sm mt-1">点击"添加持仓"按钮开始管理你的基金</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 涨跌榜面板 -->
+    <div id="panel-ranking" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold">市场涨跌榜</h2>
+          <button class="btn btn-primary" onclick="refreshRanking()">
+            <i class="fa fa-refresh mr-2"></i>刷新榜单
+          </button>
+        </div>
+        <p class="text-sm text-gray-500 mb-4">展示市场上表现最好和最差的基金，数据仅供参考</p>
+      </div>
+
+      <!-- 涨跌榜内容 -->
+      <div class="overflow-x-auto mb-6">
+        <div class="flex gap-6 min-w-max">
+          <!-- 上涨榜 -->
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden w-[600px]">
+            <div class="bg-up/10 px-6 py-3 border-b border-up/20">
+              <h3 class="text-md font-medium text-up flex items-center">
+                <i class="fa fa-arrow-up mr-2"></i>上涨榜
+              </h3>
+            </div>
+            <div class="p-4">
+              <table class="min-w-full">
+                <thead class="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-4 py-2 text-left w-[60px]">排名</th>
+                    <th class="px-4 py-2 text-left">基金名称</th>
+                    <th class="px-4 py-2 text-left w-[80px]">代码</th>
+                    <th class="px-4 py-2 text-left w-[100px]">日涨跌幅</th>
+                    <th class="px-4 py-2 text-left w-[100px]">估值</th>
+                  </tr>
+                </thead>
+                <tbody id="up-ranking-body" class="divide-y divide-gray-200">
+                  <!-- 上涨榜数据将通过JS动态添加 -->
+                  <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                      <i class="fa fa-refresh fa-spin text-primary text-xl mb-2"></i>
+                      <p>点击刷新按钮获取涨跌榜数据</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 下跌榜 -->
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden w-[600px]">
+            <div class="bg-down/10 px-6 py-3 border-b border-down/20">
+              <h3 class="text-md font-medium text-down flex items-center">
+                <i class="fa fa-arrow-down mr-2"></i>下跌榜
+              </h3>
+            </div>
+            <div class="p-4">
+              <table class="min-w-full">
+                <thead class="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <tr>
+                    <th class="px-4 py-2 text-left w-[60px]">排名</th>
+                    <th class="px-4 py-2 text-left">基金名称</th>
+                    <th class="px-4 py-2 text-left w-[80px]">代码</th>
+                    <th class="px-4 py-2 text-left w-[100px]">日涨跌幅</th>
+                    <th class="px-4 py-2 text-left w-[100px]">估值</th>
+                  </tr>
+                </thead>
+                <tbody id="down-ranking-body" class="divide-y divide-gray-200">
+                  <!-- 下跌榜数据将通过JS动态添加 -->
+                  <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                      <i class="fa fa-refresh fa-spin text-primary text-xl mb-2"></i>
+                      <p>点击刷新按钮获取涨跌榜数据</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 底部信息 -->
+  <footer class="bg-white border-t border-gray-200 py-6">
+    <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>基金估值仅供参考，实际净值以基金公司公告为准</p>
+      <p class="mt-1">© 2026 基金估值查询工具</p>
+    </div>
+  </footer>
+
+  <!-- 添加/编辑持仓弹窗 -->
+  <div id="position-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all duration-300">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium" id="modal-title">添加持仓</h3>
+      </div>
+      <div class="px-6 py-4">
+        <form id="position-form">
+          <input type="hidden" id="edit-index">
+          <div class="mb-4">
+            <label for="modal-fund-code" class="block text-sm font-medium text-gray-700 mb-1">基金代码</label>
+            <input
+              type="text"
+              id="modal-fund-code"
+              class="input w-full"
+              placeholder="请输入6位基金代码"
+              maxlength="6"
+              oninput="this.value = this.value.replace(/[^0-9]/g, ''); if(this.value.length === 6) { getFundNameByCode(this.value); }"
+            >
+            <p class="text-sm text-gray-500 mt-1" id="modal-fund-name-display"></p>
+          </div>
+          <div class="mb-4">
+            <label for="modal-shares" class="block text-sm font-medium text-gray-700 mb-1">持仓份额</label>
+            <input
+              type="number"
+              id="modal-shares"
+              class="input w-full"
+              placeholder="请输入持仓份额"
+              min="0.01"
+              step="0.01"
+            >
+          </div>
+          <div class="mb-4">
+            <label for="modal-cost" class="block text-sm font-medium text-gray-700 mb-1">成本价</label>
+            <input
+              type="number"
+              id="modal-cost"
+              class="input w-full"
+              placeholder="请输入成本价"
+              min="0.01"
+              step="0.01"
+            >
+          </div>
+          <div class="mb-4">
+            <label for="modal-trade-date" class="block text-sm font-medium text-gray-700 mb-1">交易时间</label>
+            <input
+              type="date"
+              id="modal-trade-date"
+              class="input w-full"
+              value=""
+            >
+          </div>
+        </form>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+        <button class="btn btn-secondary" onclick="closePositionModal()">取消</button>
+        <button class="btn btn-primary" onclick="savePosition()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div id="toast" class="fixed top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-md shadow-lg transform transition-all duration-300 translate-x-full opacity-0">
+    <span id="toast-message"></span>
+  </div>
+
+  <script>
+    // 全局变量
+    let currentFundData = null;
+    let positionList = [];
+    let originalPositionList = [];
+    let historyStack = [];
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化主题
+      initTheme();
+      
+      // 确保positionList有数据
+      try {
+        positionList = JSON.parse(localStorage.getItem('positionList')) || [];
+        originalPositionList = JSON.parse(localStorage.getItem('originalPositionList')) || [];
+      } catch (error) {
+        // 如果localStorage中的数据有问题，重置为示例数据
+        positionList = [
+          {
+            code: "000001",
+            shares: 1000,
+            cost: 1.2345,
+            tradeDate: "2026-01-01",
+            name: "华夏成长混合",
+            estimate: 1.2456,
+            dayChange: 0.90
+          },
+          {
+            code: "000005",
+            shares: 2000,
+            cost: 1.0567,
+            tradeDate: "2026-01-02",
+            name: "嘉实增强信用定期债券",
+            estimate: 1.0589,
+            dayChange: 0.21
+          }
+        ];
+        localStorage.setItem('positionList', JSON.stringify(positionList));
+        localStorage.setItem('originalPositionList', JSON.stringify(positionList));
+      }
+      
+      // 如果positionList仍然为空，添加示例数据
+      if (!Array.isArray(positionList) || positionList.length === 0) {
+        positionList = [
+          {
+            code: "000001",
+            shares: 1000,
+            cost: 1.2345,
+            tradeDate: "2026-01-01",
+            name: "华夏成长混合",
+            estimate: 1.2456,
+            dayChange: 0.90
+          },
+          {
+            code: "000005",
+            shares: 2000,
+            cost: 1.0567,
+            tradeDate: "2026-01-02",
+            name: "嘉实增强信用定期债券",
+            estimate: 1.0589,
+            dayChange: 0.21
+          }
+        ];
+        localStorage.setItem('positionList', JSON.stringify(positionList));
+        localStorage.setItem('originalPositionList', JSON.stringify(positionList));
+      }
+      
+      // 确保每个持仓项都有必要的属性
+      positionList.forEach(position => {
+        if (position) {
+          position.name = position.name || `基金${position.code}`;
+          position.estimate = position.estimate || position.cost;
+          position.dayChange = position.dayChange || 0;
+        }
+      });
+      
+      // 渲染持仓列表
+      renderPositions();
+    });
+
+    // 切换选项卡
+    function switchTab(tab, fromHistory = false) {
+      // 获取当前激活的选项卡
+      let currentTab = '';
+      const tabs = ['query', 'position', 'ranking'];
+      tabs.forEach(t => {
+        if (document.getElementById(`tab-${t}`).classList.contains('tab-active')) {
+          currentTab = t;
+        }
+      });
+      
+      // 记录历史记录（除非是从历史记录返回）
+      if (!fromHistory && currentTab) {
+        historyStack.push(currentTab);
+        // 限制历史记录长度
+        if (historyStack.length > 10) {
+          historyStack.shift();
+        }
+      }
+      
+      console.log('历史记录：', historyStack);
+      
+      // 重置所有选项卡和面板
+      tabs.forEach(t => {
+        document.getElementById(`tab-${t}`).classList.remove('tab-active');
+        document.getElementById(`tab-${t}`).classList.add('text-gray-500', 'hover:text-gray-700');
+        document.getElementById(`panel-${t}`).classList.add('hidden');
+        document.getElementById(`panel-${t}`).classList.remove('fade-enter-active');
+      });
+
+      // 激活选中的选项卡和面板
+      document.getElementById(`tab-${tab}`).classList.add('tab-active');
+      document.getElementById(`tab-${tab}`).classList.remove('text-gray-500', 'hover:text-gray-700');
+      document.getElementById(`panel-${tab}`).classList.remove('hidden');
+      document.getElementById(`panel-${tab}`).classList.add('fade-enter-active');
+
+      // 特殊处理
+      if (tab === 'position') {
+        console.log('切换到持仓选项卡，调用renderPositions');
+        renderPositions();
+      }
+      
+      // 更新返回按钮状态
+      updateBackButton();
+    }
+
+    // 基金名称和代码映射表
+    const fundNameMap = {
+      '华夏成长混合': '000001',
+      '嘉实增强信用定期债券': '000005',
+      '华夏纯债券A': '000015',
+      '华夏纯债券C': '000016',
+      '财通可持续混合': '000017',
+      '景顺长城品质投资混合A': '000020',
+      '华夏优势增长混合': '000021',
+      '嘉实中证500ETF联接A': '000008',
+      '华夏亚债中国指数A': '000010',
+      '华夏亚债中国指数C': '000011',
+      '华夏债券AB': '000012',
+      '华夏债券C': '000013',
+      '华夏货币A': '000014',
+      '嘉实货币A': '000034',
+      '嘉实货币B': '000035',
+      '华夏回报混合A': '002001',
+      '华夏回报混合B': '002002',
+      '华夏红利混合': '002011',
+      '嘉实成长混合A': '070001',
+      '嘉实增长混合': '070002',
+      '嘉实稳健混合': '070003',
+      '嘉实债券': '070005'
+    };
+
+    // 模拟基金数据（备用）
+    const mockFundData = {
+      '000001': {
+        name: '华夏成长混合',
+        fundcode: '000001',
+        dwjz: '1.2345',
+        gsz: '1.2456',
+        gztime: '2026-02-04 15:00',
+        jzrq: '2026-02-03',
+        dayChange: 0.90
+      },
+      '000005': {
+        name: '嘉实增强信用定期债券',
+        fundcode: '000005',
+        dwjz: '1.0567',
+        gsz: '1.0589',
+        gztime: '2026-02-04 15:00',
+        jzrq: '2026-02-03',
+        dayChange: 0.21
+      },
+      '000015': {
+        name: '华夏纯债券A',
+        fundcode: '000015',
+        dwjz: '1.1234',
+        gsz: '1.1245',
+        gztime: '2026-02-04 15:00',
+        jzrq: '2026-02-03',
+        dayChange: 0.10
+      },
+      '000016': {
+        name: '华夏纯债券C',
+        fundcode: '000016',
+        dwjz: '1.1123',
+        gsz: '1.1134',
+        gztime: '2026-02-04 15:00',
+        jzrq: '2026-02-03',
+        dayChange: 0.10
+      },
+      '000017': {
+        name: '财通可持续混合',
+        fundcode: '000017',
+        dwjz: '0.9876',
+        gsz: '0.9654',
+        gztime: '2026-02-04 15:00',
+        jzrq: '2026-02-03',
+        dayChange: -2.25
+      }
+    };
+
+    // 查询基金估值
+    function queryFund() {
+      const input = document.getElementById('fund-code').value.trim();
+      
+      // 校验输入
+      if (!input) {
+        showError('请输入基金代码或基金名称');
+        return;
+      }
+
+      // 确定基金代码
+      let fundCode;
+      if (/^\d{6}$/.test(input)) {
+        // 输入是6位数字，直接作为基金代码
+        fundCode = input;
+      } else {
+        // 输入是基金名称，查找对应的代码
+        fundCode = findFundCodeByName(input);
+        if (!fundCode) {
+          showError('未找到对应的基金，请检查输入是否正确');
+          return;
+        }
+      }
+
+      // 显示加载状态
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('query-result').classList.add('hidden');
+      document.getElementById('error').classList.add('hidden');
+
+      // 尝试使用模拟数据（备用方案）
+      if (mockFundData[fundCode]) {
+        const fundData = mockFundData[fundCode];
+        // 保存当前基金数据
+        currentFundData = fundData;
+        // 显示结果
+        showQueryResult(fundData);
+        document.getElementById('loading').classList.add('hidden');
+        showToast('使用模拟数据展示');
+        return;
+      }
+
+      // 调用基金估值接口（使用 CORS 代理）
+      const apiUrl = `http://fundgz.1234567.com.cn/js/${fundCode}.js`;
+      const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
+      
+      fetch(proxyUrl, {
+        method: 'GET',
+        cache: 'no-cache'
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          try {
+            // 解析返回数据
+            const jsonStr = data.substring(data.indexOf('{'), data.lastIndexOf('}') + 1);
+            const fundData = JSON.parse(jsonStr);
+            
+            // 保存当前基金数据
+            currentFundData = fundData;
+            
+            // 显示结果
+            showQueryResult(fundData);
+          } catch (error) {
+            showError('基金代码错误或查询失败，请检查后重试');
+          }
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+          showError('网络错误，请稍后重试，可能是基金接口或网络连接问题');
+        })
+        .finally(() => {
+          document.getElementById('loading').classList.add('hidden');
+        });
+    }
+
+    // 根据基金名称查找代码（支持模糊匹配）
+    function findFundCodeByName(name) {
+      // 首先尝试精确匹配
+      if (fundNameMap[name]) {
+        return fundNameMap[name];
+      }
+
+      // 然后尝试模糊匹配
+      for (const [fundName, code] of Object.entries(fundNameMap)) {
+        if (fundName.includes(name)) {
+          return code;
+        }
+      }
+
+      // 没有找到匹配的基金
+      return null;
+    }
+
+    // 显示查询结果
+    function showQueryResult(fundData) {
+      document.getElementById('fund-name').textContent = fundData.name;
+      document.getElementById('fund-code-display').textContent = fundData.fundcode;
+      document.getElementById('net-value').textContent = fundData.jzrq + '：' + fundData.dwjz;
+      document.getElementById('estimate-value').textContent = fundData.gsz;
+      document.getElementById('estimate-time').textContent = fundData.gztime;
+      
+      // 计算涨跌幅
+      const dayChange = ((fundData.gsz - fundData.dwjz) / fundData.dwjz * 100).toFixed(2);
+      const dayChangeElement = document.getElementById('day-change');
+      dayChangeElement.textContent = dayChange + '%';
+      
+      // 设置涨跌颜色
+      if (parseFloat(dayChange) > 0) {
+        dayChangeElement.className = 'text-xl font-medium text-up';
+      } else if (parseFloat(dayChange) < 0) {
+        dayChangeElement.className = 'text-xl font-medium text-down';
+      } else {
+        dayChangeElement.className = 'text-xl font-medium text-flat';
+      }
+      
+      // 显示结果面板
+      document.getElementById('query-result').classList.remove('hidden');
+      document.getElementById('error').classList.add('hidden');
+    }
+
+    // 显示错误信息
+    function showError(message) {
+      document.getElementById('error-message').textContent = message;
+      document.getElementById('error').classList.remove('hidden');
+      document.getElementById('query-result').classList.add('hidden');
+    }
+
+    // 显示添加持仓弹窗
+    function showAddPositionModal() {
+      document.getElementById('modal-title').textContent = '添加持仓';
+      document.getElementById('edit-index').value = '';
+      document.getElementById('modal-fund-code').value = currentFundData ? currentFundData.fundcode : '';
+      document.getElementById('modal-shares').value = '';
+      document.getElementById('modal-cost').value = '';
+      document.getElementById('modal-trade-date').value = '';
+      document.getElementById('modal-fund-name-display').textContent = '';
+      document.getElementById('position-modal').classList.remove('hidden');
+    }
+
+    // 显示编辑持仓弹窗
+    function showEditPositionModal(index) {
+      const position = positionList[index];
+      // 确保position对象存在
+      if (!position) {
+        showToast('持仓数据无效');
+        return;
+      }
+      document.getElementById('modal-title').textContent = '编辑持仓';
+      document.getElementById('edit-index').value = index;
+      document.getElementById('modal-fund-code').value = position.code || '';
+      document.getElementById('modal-shares').value = position.shares || '';
+      document.getElementById('modal-cost').value = position.cost || '';
+      document.getElementById('modal-trade-date').value = position.tradeDate || '';
+      // 如果有基金代码，显示基金名称
+      if (position.code) {
+        getFundNameByCode(position.code);
+      } else {
+        document.getElementById('modal-fund-name-display').textContent = '';
+      }
+      document.getElementById('position-modal').classList.remove('hidden');
+    }
+
+    // 关闭弹窗
+    function closePositionModal() {
+      document.getElementById('position-modal').classList.add('hidden');
+    }
+
+    // 保存持仓
+    function savePosition() {
+      const fundCode = document.getElementById('modal-fund-code').value.trim();
+      const shares = parseFloat(document.getElementById('modal-shares').value);
+      const cost = parseFloat(document.getElementById('modal-cost').value);
+      const editIndexStr = document.getElementById('edit-index').value;
+      const editIndex = editIndexStr !== '' ? parseInt(editIndexStr, 10) : -1;
+
+      // 校验输入
+      if (!fundCode || fundCode.length !== 6) {
+        showToast('请输入6位数字基金代码');
+        return;
+      }
+
+      if (!shares || shares <= 0) {
+        showToast('请输入有效的持仓份额');
+        return;
+      }
+
+      if (!cost || cost <= 0) {
+        showToast('请输入有效的成本价');
+        return;
+      }
+
+      // 检查是否重复添加
+      if (editIndex === -1) {
+        const isDuplicate = positionList.some(pos => pos.code === fundCode);
+        if (isDuplicate) {
+          showToast('该基金已在持仓列表中');
+          return;
+        }
+      }
+
+      // 获取交易时间
+      const tradeDate = document.getElementById('modal-trade-date').value;
+
+      // 构建持仓对象
+      const position = {
+        code: fundCode,
+        shares: shares,
+        cost: cost,
+        tradeDate: tradeDate
+      };
+
+      // 保存到持仓列表
+      if (editIndex !== -1) {
+        positionList[editIndex] = position;
+        showToast('持仓修改成功');
+      } else {
+        positionList.push(position);
+        showToast('持仓添加成功');
+      }
+
+      // 保存到本地存储
+      localStorage.setItem('positionList', JSON.stringify(positionList));
+      localStorage.setItem('originalPositionList', JSON.stringify(positionList));
+
+      // 关闭弹窗并刷新持仓列表
+      closePositionModal();
+      renderPositions();
+    }
+
+    // 删除持仓
+    function deletePosition(index) {
+      if (confirm('确定要删除该持仓吗？')) {
+        positionList.splice(index, 1);
+        localStorage.setItem('positionList', JSON.stringify(positionList));
+        localStorage.setItem('originalPositionList', JSON.stringify(positionList));
+        showToast('持仓删除成功');
+        renderPositions();
+      }
+    }
+
+    // 渲染持仓列表
+    function renderPositions() {
+      const tableBody = document.getElementById('position-table-body');
+      const emptyPosition = document.getElementById('empty-position');
+      const emptyPositionTbody = emptyPosition ? emptyPosition.parentElement : null;
+      
+      // 确保元素存在
+      if (!tableBody || !emptyPosition || !emptyPositionTbody) {
+        console.error('表格元素不存在');
+        return;
+      }
+      
+      // 清空表格
+      tableBody.innerHTML = '';
+      
+      // 确保positionList存在且为数组
+      if (!Array.isArray(positionList)) {
+        positionList = [];
+      }
+      
+      // 显示空状态
+      if (positionList.length === 0) {
+        console.log('显示空状态');
+        emptyPositionTbody.classList.remove('hidden');
+        updatePositionSummary([]);
+        return;
+      }
+
+      // 隐藏空状态
+      emptyPositionTbody.classList.add('hidden');
+      console.log('隐藏空状态，开始渲染持仓项');
+      
+      // 调试信息
+      console.log('渲染持仓列表，数据长度：', positionList.length);
+      console.log('持仓数据：', positionList);
+
+      // 渲染持仓列表
+      try {
+        positionList.forEach((position, index) => {
+          console.log('处理持仓项', index, position);
+          
+          // 确保position对象存在
+          if (!position) {
+            console.warn('持仓项为空', index);
+            return;
+          }
+          
+          const row = document.createElement('tr');
+          row.className = 'card-hover';
+          
+          // 计算收益
+          const estimate = position.estimate || position.cost || 0;
+          const dayChange = position.dayChange || 0;
+          const shares = position.shares || 0;
+          const cost = position.cost || 0;
+          const todayProfit = shares * (estimate - cost) * (dayChange / 100);
+          const holdProfit = shares * (estimate - cost);
+          
+          // 设置涨跌颜色
+          let dayChangeClass = 'text-flat';
+          if (dayChange > 0) dayChangeClass = 'text-up';
+          else if (dayChange < 0) dayChangeClass = 'text-down';
+
+          let todayProfitClass = 'text-flat';
+          if (todayProfit > 0) todayProfitClass = 'text-up';
+          else if (todayProfit < 0) todayProfitClass = 'text-down';
+
+          let holdProfitClass = 'text-flat';
+          if (holdProfit > 0) holdProfitClass = 'text-up';
+          else if (holdProfit < 0) holdProfitClass = 'text-down';
+
+          // 计算持有天数
+          function calculateHoldDays(tradeDate) {
+            if (!tradeDate) return '-';
+            const today = new Date();
+            const trade = new Date(tradeDate);
+            const diffTime = Math.abs(today - trade);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+          }
+
+          const holdDays = calculateHoldDays(position.tradeDate);
+
+          // 创建表格行内容
+          const rowContent = `
+            <td class="px-6 py-4 whitespace-nowrap">
+              <input type="checkbox" class="position-checkbox" data-index="${index}" onchange="updateBatchDeleteButton()">
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium">
+                <a href="javascript:void(0)" class="text-primary hover:text-primary/80" onclick="viewFundDetail('${position.code || ''}')">
+                  ${position.name || `基金${position.code || '未知'}`}
+                </a>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">${position.code || '-'}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm">${shares.toFixed(2)}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm">¥${cost.toFixed(4)}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm">${position.tradeDate || '-'}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm">${holdDays}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm">¥${estimate.toFixed(4)}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm ${dayChangeClass}">${dayChange.toFixed(2)}%</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm ${todayProfitClass}">¥${todayProfit.toFixed(2)}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm ${holdProfitClass}">¥${holdProfit.toFixed(2)}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <button class="text-primary hover:text-primary/80 mr-3" onclick="showEditPositionModal(${index})" title="编辑">
+                <i class="fa fa-pencil"></i> 编辑
+              </button>
+              <button class="text-danger hover:text-danger/80" onclick="deletePosition(${index})" title="删除">
+                <i class="fa fa-trash"></i> 删除
+              </button>
+            </td>
+          `;
+          
+          row.innerHTML = rowContent;
+          tableBody.appendChild(row);
+          console.log('添加持仓项到表格', index);
+        });
+      } catch (error) {
+        console.error('渲染持仓列表时出错', error);
+        // 显示错误状态
+        emptyPositionTbody.classList.remove('hidden');
+        emptyPosition.innerHTML = `
+          <td colspan="12" class="px-6 py-12 text-center text-gray-500">
+            <i class="fa fa-exclamation-circle text-3xl mb-2"></i>
+            <p>渲染持仓列表时出错</p>
+            <p class="text-sm mt-1">${error.message}</p>
+          </td>
+        `;
+        return;
+      }
+
+      // 更新持仓汇总
+      updatePositionSummary(positionList);
+      console.log('持仓列表渲染完成');
+    }
+
+    // 刷新所有持仓估值
+    function refreshAllPositions() {
+      if (positionList.length === 0) {
+        showToast('暂无持仓数据');
+        return;
+      }
+
+      // 显示加载状态
+      showToast('正在刷新估值...');
+
+      // 使用模拟数据（备用方案）
+      positionList.forEach(position => {
+        if (mockFundData[position.code]) {
+          const fundData = mockFundData[position.code];
+          position.name = fundData.name;
+          position.estimate = parseFloat(fundData.gsz);
+          position.dayChange = parseFloat(((fundData.gsz - fundData.dwjz) / fundData.dwjz * 100).toFixed(2));
+        } else {
+          // 为没有模拟数据的基金生成随机数据
+          position.name = position.name || `基金${position.code}`;
+          position.estimate = parseFloat((Math.random() * 0.5 + 0.8).toFixed(4));
+          position.dayChange = parseFloat((Math.random() * 4 - 1).toFixed(2));
+        }
+      });
+
+      // 保存到本地存储
+      localStorage.setItem('positionList', JSON.stringify(positionList));
+
+      // 刷新列表
+      renderPositions();
+      showToast('使用模拟数据刷新估值');
+      return;
+
+      // 以下是原有的网络请求代码，作为备用
+      /*
+      // 并行请求所有基金估值
+      const promises = positionList.map(position => {
+        const apiUrl = `http://fundgz.1234567.com.cn/js/${position.code}.js`;
+        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
+        return fetch(proxyUrl, {
+          method: 'GET',
+          cache: 'no-cache'
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then(data => {
+            try {
+              const jsonStr = data.substring(data.indexOf('{'), data.lastIndexOf('}') + 1);
+              return JSON.parse(jsonStr);
+            } catch (error) {
+              return null;
+            }
+          })
+          .catch(error => {
+            return null;
+          });
+      });
+
+      // 处理所有请求结果
+      Promise.all(promises)
+        .then(results => {
+          results.forEach((fundData, index) => {
+            if (fundData) {
+              positionList[index].name = fundData.name;
+              positionList[index].estimate = parseFloat(fundData.gsz);
+              positionList[index].dayChange = parseFloat(((fundData.gsz - fundData.dwjz) / fundData.dwjz * 100).toFixed(2));
+            }
+          });
+
+          // 保存到本地存储
+          localStorage.setItem('positionList', JSON.stringify(positionList));
+
+          // 刷新列表
+          renderPositions();
+          showToast('估值刷新完成');
+        });
+      */
+    }
+
+    // 更新持仓汇总
+    function updatePositionSummary(positions) {
+      let totalPositions = positions.length;
+      let upCount = 0;
+      let downCount = 0;
+      let todayProfit = 0;
+      let holdProfit = 0;
+      let totalCost = 0;
+
+      positions.forEach(position => {
+        if (!position) return;
+        
+        if (position.dayChange > 0) upCount++;
+        else if (position.dayChange < 0) downCount++;
+
+        const estimate = position.estimate || position.cost || 0;
+        const dayChange = position.dayChange || 0;
+        const shares = position.shares || 0;
+        const cost = position.cost || 0;
+        
+        todayProfit += shares * (estimate - cost) * (dayChange / 100);
+        holdProfit += shares * (estimate - cost);
+        totalCost += shares * cost;
+      });
+
+      const totalRate = totalCost > 0 ? (holdProfit / totalCost * 100) : 0;
+
+      // 更新汇总数据
+      document.getElementById('total-positions').textContent = totalPositions;
+      document.getElementById('up-count').textContent = upCount;
+      document.getElementById('down-count').textContent = downCount;
+      document.getElementById('today-profit').textContent = `¥${todayProfit.toFixed(2)}`;
+      document.getElementById('hold-profit').textContent = `¥${holdProfit.toFixed(2)}`;
+      document.getElementById('total-rate').textContent = `${totalRate.toFixed(2)}%`;
+
+      // 设置收益颜色
+      const todayProfitElement = document.getElementById('today-profit');
+      const holdProfitElement = document.getElementById('hold-profit');
+      const totalRateElement = document.getElementById('total-rate');
+
+      if (todayProfit > 0) todayProfitElement.className = 'font-medium text-up';
+      else if (todayProfit < 0) todayProfitElement.className = 'font-medium text-down';
+      else todayProfitElement.className = 'font-medium text-flat';
+
+      if (holdProfit > 0) holdProfitElement.className = 'font-medium text-up';
+      else if (holdProfit < 0) holdProfitElement.className = 'font-medium text-down';
+      else holdProfitElement.className = 'font-medium text-flat';
+
+      if (totalRate > 0) totalRateElement.className = 'font-medium text-up';
+      else if (totalRate < 0) totalRateElement.className = 'font-medium text-down';
+      else totalRateElement.className = 'font-medium text-flat';
+    }
+
+    // 排序持仓
+    function sortPositions() {
+      const sortBy = document.getElementById('sort-by').value;
+      const sortOrder = document.getElementById('sort-order').value;
+
+      if (sortBy === 'default') {
+        positionList = JSON.parse(JSON.stringify(originalPositionList));
+      } else {
+        positionList.sort((a, b) => {
+          let aValue = a[sortBy] || 0;
+          let bValue = b[sortBy] || 0;
+          
+          if (sortOrder === 'asc') {
+            return aValue - bValue;
+          } else {
+            return bValue - aValue;
+          }
+        });
+      }
+
+      renderPositions();
+    }
+
+    // 显示 Toast 提示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      
+      toastMessage.textContent = message;
+      toast.classList.remove('translate-x-full', 'opacity-0');
+      
+      // 3秒后自动隐藏
+      setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+      }, 3000);
+    }
+
+    // 点击遮罩关闭弹窗
+    document.getElementById('position-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePositionModal();
+      }
+    });
+
+    // 刷新涨跌榜
+    function refreshRanking() {
+      // 显示加载状态
+      showToast('正在获取涨跌榜数据...');
+
+      // 使用模拟数据（备用方案）
+      const mockFunds = Object.values(mockFundData);
+      // 按涨跌幅排序
+      mockFunds.sort((a, b) => b.dayChange - a.dayChange);
+      // 分离上涨榜和下跌榜
+      const upRanking = mockFunds.filter(fund => fund.dayChange > 0).slice(0, 10);
+      const downRanking = mockFunds.filter(fund => fund.dayChange < 0).sort((a, b) => a.dayChange - b.dayChange).slice(0, 10);
+      // 渲染涨跌榜
+      renderRanking('up-ranking-body', upRanking, true);
+      renderRanking('down-ranking-body', downRanking, false);
+      showToast('使用模拟数据展示涨跌榜');
+      return;
+
+      // 以下是原有的网络请求代码，作为备用
+      /*
+      // 减少基金代码数量，提高响应速度
+      const fundCodes = [
+        '000001', '000005', '000015', '000016', '000017',
+        '000020', '000021', '000008', '000010', '000011',
+        '000012', '000013', '000014', '000018', '000019'
+      ];
+
+      // 并行请求所有基金估值
+      const promises = fundCodes.map(code => {
+        const apiUrl = `http://fundgz.1234567.com.cn/js/${code}.js`;
+        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
+        return fetch(proxyUrl, {
+          method: 'GET',
+          cache: 'no-cache'
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then(data => {
+            try {
+              const jsonStr = data.substring(data.indexOf('{'), data.lastIndexOf('}') + 1);
+              const fundData = JSON.parse(jsonStr);
+              // 计算涨跌幅
+              fundData.dayChange = parseFloat(((fundData.gsz - fundData.dwjz) / fundData.dwjz * 100).toFixed(2));
+              return fundData;
+            } catch (error) {
+              return null;
+            }
+          })
+          .catch(error => {
+            return null;
+          });
+      });
+
+      // 处理所有请求结果
+      Promise.all(promises)
+        .then(results => {
+          // 过滤掉无效数据
+          const validFunds = results.filter(fund => fund !== null && fund.dayChange !== undefined);
+
+          // 按涨跌幅排序
+          validFunds.sort((a, b) => b.dayChange - a.dayChange);
+
+          // 分离上涨榜和下跌榜
+          const upRanking = validFunds.filter(fund => fund.dayChange > 0).slice(0, 10);
+          const downRanking = validFunds.filter(fund => fund.dayChange < 0).sort((a, b) => a.dayChange - b.dayChange).slice(0, 10);
+
+          // 渲染涨跌榜
+          renderRanking('up-ranking-body', upRanking, true);
+          renderRanking('down-ranking-body', downRanking, false);
+
+          showToast('涨跌榜数据获取完成');
+        })
+        .catch(error => {
+          showToast('获取涨跌榜数据失败，请稍后重试');
+        });
+      */
+    }
+
+    // 渲染涨跌榜
+    function renderRanking(elementId, funds, isUp) {
+      const tbody = document.getElementById(elementId);
+      
+      // 清空表格
+      tbody.innerHTML = '';
+      
+      // 显示空状态
+      if (funds.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+            <i class="fa fa-info-circle text-gray-400 text-xl mb-2"></i>
+            <p>${isUp ? '暂无上涨基金数据' : '暂无下跌基金数据'}</p>
+          </td>
+        `;
+        tbody.appendChild(row);
+        return;
+      }
+
+      // 渲染涨跌榜数据
+      funds.forEach((fund, index) => {
+        const row = document.createElement('tr');
+        row.className = 'card-hover';
+        
+        // 设置涨跌颜色
+        let dayChangeClass = 'text-flat';
+        if (fund.dayChange > 0) dayChangeClass = 'text-up';
+        else if (fund.dayChange < 0) dayChangeClass = 'text-down';
+
+        row.innerHTML = `
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="text-sm font-medium">${index + 1}</div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="text-sm text-primary cursor-pointer hover:underline" onclick="viewFundDetail('${fund.fundcode}')">${fund.name}</div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="text-sm text-gray-500">${fund.fundcode}</div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="text-sm ${dayChangeClass}">${fund.dayChange.toFixed(2)}%</div>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <div class="text-sm">¥${fund.gsz}</div>
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+
+    // 查看基金详情
+    function viewFundDetail(fundCode) {
+      // 确保基金代码存在
+      if (!fundCode || fundCode.trim() === '') {
+        showToast('基金代码无效');
+        return;
+      }
+      
+      // 切换到估值查询面板
+      switchTab('query');
+      
+      // 填充基金代码到输入框
+      document.getElementById('fund-code').value = fundCode;
+      
+      // 触发查询操作
+      queryFund();
+    }
+
+    // 返回上一步
+    function goBack() {
+      if (historyStack.length > 0) {
+        const previousTab = historyStack.pop();
+        console.log('返回上一步：', previousTab);
+        switchTab(previousTab, true);
+      }
+    }
+    
+    // 更新返回按钮状态
+    function updateBackButton() {
+      const backBtn = document.getElementById('back-btn');
+      if (backBtn) {
+        if (historyStack.length > 0) {
+          backBtn.classList.remove('hidden');
+        } else {
+          backBtn.classList.add('hidden');
+        }
+      }
+    }
+    
+    // 更新批量删除按钮状态
+    function updateBatchDeleteButton() {
+      const checkboxes = document.querySelectorAll('.position-checkbox:checked');
+      const batchDeleteBtn = document.getElementById('batch-delete-btn');
+      if (batchDeleteBtn) {
+        batchDeleteBtn.disabled = checkboxes.length === 0;
+      }
+      // 更新全选复选框状态
+      const allCheckboxes = document.querySelectorAll('.position-checkbox');
+      const selectAllCheckbox = document.getElementById('select-all-checkbox');
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = allCheckboxes.length > 0 && Array.from(allCheckboxes).every(cb => cb.checked);
+      }
+    }
+    
+    // 全选或取消全选所有持仓项
+    function selectAllPositions(checked) {
+      const checkboxes = document.querySelectorAll('.position-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = checked;
+      });
+      updateBatchDeleteButton();
+    }
+    
+    // 批量删除选中的持仓项
+    function batchDeletePositions() {
+      const checkboxes = document.querySelectorAll('.position-checkbox:checked');
+      if (checkboxes.length === 0) {
+        showToast('请先选择要删除的持仓项');
+        return;
+      }
+      
+      if (confirm(`确定要删除${checkboxes.length}个持仓项吗？`)) {
+        // 获取选中的索引
+        const indexes = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index, 10)).sort((a, b) => b - a);
+        
+        // 从后往前删除，避免索引错乱
+        indexes.forEach(index => {
+          positionList.splice(index, 1);
+        });
+        
+        // 保存到本地存储
+        localStorage.setItem('positionList', JSON.stringify(positionList));
+        localStorage.setItem('originalPositionList', JSON.stringify(positionList));
+        
+        // 刷新持仓列表
+        renderPositions();
+        showToast(`成功删除${checkboxes.length}个持仓项`);
+      }
+    }
+    
+    // 分享应用
+    function shareApp() {
+      // 检查是否在本地运行
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+      
+      if (isLocal) {
+        // 本地运行，提示用户如何分享
+        showToast('本地运行模式，无法直接分享。请部署到网络服务器后再使用分享功能。');
+        return;
+      }
+      
+      // 构建分享URL
+      const shareUrl = window.location.href;
+      
+      // 尝试使用Web Share API
+      if (navigator.share) {
+        navigator.share({
+          title: '基金估值查询工具',
+          text: '实时查询基金估值，管理你的投资组合',
+          url: shareUrl
+        })
+        .then(() => showToast('分享成功'))
+        .catch(error => {
+          console.error('分享失败:', error);
+          // 降级到复制链接
+          copyShareLink(shareUrl);
+        });
+      } else {
+        // 不支持Web Share API，降级到复制链接
+        copyShareLink(shareUrl);
+      }
+    }
+    
+    // 复制分享链接
+    function copyShareLink(url) {
+      navigator.clipboard.writeText(url)
+        .then(() => {
+          showToast('分享链接已复制到剪贴板');
+        })
+        .catch(error => {
+          console.error('复制失败:', error);
+          showToast('复制失败，请手动复制链接');
+        });
+    }
+    
+    // 切换主题
+    function toggleTheme() {
+      const body = document.body;
+      const themeToggle = document.getElementById('theme-toggle');
+      const icon = themeToggle.querySelector('i');
+      
+      // 切换主题类
+      body.classList.toggle('dark-theme');
+      
+      // 切换图标
+      if (icon.classList.contains('fa-sun-o')) {
+        icon.classList.remove('fa-sun-o');
+        icon.classList.add('fa-moon-o');
+        // 应用深色主题样式
+        body.classList.add('bg-gray-900', 'text-white');
+        body.classList.remove('bg-gray-50', 'text-gray-800');
+      } else {
+        icon.classList.remove('fa-moon-o');
+        icon.classList.add('fa-sun-o');
+        // 应用浅色主题样式
+        body.classList.add('bg-gray-50', 'text-gray-800');
+        body.classList.remove('bg-gray-900', 'text-white');
+      }
+      
+      // 保存主题设置到本地存储
+      const isDark = icon.classList.contains('fa-moon-o');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+    
+    // 初始化主题
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeToggle = document.getElementById('theme-toggle');
+      const icon = themeToggle.querySelector('i');
+      const body = document.body;
+      
+      if (savedTheme === 'dark') {
+        // 应用深色主题
+        icon.classList.remove('fa-sun-o');
+        icon.classList.add('fa-moon-o');
+        body.classList.add('bg-gray-900', 'text-white');
+        body.classList.remove('bg-gray-50', 'text-gray-800');
+      } else {
+        // 应用浅色主题
+        icon.classList.remove('fa-moon-o');
+        icon.classList.add('fa-sun-o');
+        body.classList.add('bg-gray-50', 'text-gray-800');
+        body.classList.remove('bg-gray-900', 'text-white');
+      }
+    }
+    
+    // 根据基金代码获取基金名称
+    function getFundNameByCode(code) {
+      // 尝试从模拟数据中获取
+      if (mockFundData[code]) {
+        const fundName = mockFundData[code].name;
+        document.getElementById('modal-fund-name-display').textContent = `基金名称：${fundName}`;
+        return fundName;
+      }
+      
+      // 尝试从映射表中获取
+      for (const [name, fundCode] of Object.entries(fundNameMap)) {
+        if (fundCode === code) {
+          document.getElementById('modal-fund-name-display').textContent = `基金名称：${name}`;
+          return name;
+        }
+      }
+      
+      // 未找到，显示默认提示
+      document.getElementById('modal-fund-name-display').textContent = '未找到基金名称，请检查代码是否正确';
+      return null;
+    }
+    
+    // 计算持有天数
+    function calculateHoldDays(tradeDate) {
+      if (!tradeDate) return '-';
+      const today = new Date();
+      const trade = new Date(tradeDate);
+      const diffTime = Math.abs(today - trade);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays;
+    }
+  </script>
+</body>
+</html>
