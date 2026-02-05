@@ -81,6 +81,19 @@
       .fade-exit-active {
         @apply opacity-0 transition-opacity duration-300;
       }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .mobile-friendly {
+        @apply sm:max-w-full sm:flex-wrap sm:justify-center;
+      }
+      .table-responsive {
+        @apply overflow-x-auto;
+      }
     }
   </style>
 </head>
@@ -89,9 +102,6 @@
   <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
       <div class="flex justify-between items-center mb-4">
-        <button id="back-btn" class="px-3 py-1 rounded-md text-sm font-medium bg-secondary text-white hover:bg-secondary/90 hidden" onclick="goBack()">
-          <i class="fa fa-arrow-left mr-1"></i>返回
-        </button>
         <div class="flex items-center justify-center flex-1 gap-2">
           <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Simple%20modern%20logo%20for%20financial%20tool%20called%20%22GuZhiBao%22%20with%20chart%20icon%20and%20blue%20color%20scheme&image_size=square" alt="估值宝" class="w-10 h-10 rounded-full">
           <h1 class="text-2xl font-bold text-center text-primary">估值宝</h1>
@@ -109,22 +119,24 @@
   <!-- 主内容区 -->
   <main class="container mx-auto px-3 py-4">
     <!-- 选项卡 -->
-    <div class="flex border-b border-gray-200 mb-4">
-      <button id="tab-home" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('home')">
-        首页
-      </button>
-      <button id="tab-query" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('query')">
-        估值查询
-      </button>
-      <button id="tab-position" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('position')">
-        我的持仓
-      </button>
-      <button id="tab-ranking" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('ranking')">
-        涨跌榜
-      </button>
-      <button id="tab-news" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="switchTab('news')">
-        新闻资讯
-      </button>
+    <div class="relative border-b border-gray-200 mb-4">
+      <div class="flex overflow-x-auto whitespace-nowrap scrollbar-hide">
+        <button id="tab-home" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 min-w-max" onclick="switchTab('home')">
+          首页
+        </button>
+        <button id="tab-query" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 min-w-max" onclick="switchTab('query')">
+          估值查询
+        </button>
+        <button id="tab-position" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 min-w-max" onclick="switchTab('position')">
+          我的持仓
+        </button>
+        <button id="tab-ranking" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 min-w-max" onclick="switchTab('ranking')">
+          涨跌榜
+        </button>
+        <button id="tab-news" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 min-w-max" onclick="switchTab('news')">
+          新闻资讯
+        </button>
+      </div>
     </div>
 
     <!-- 首页面板 -->
@@ -442,7 +454,8 @@
 
       <!-- 持仓列表 -->
       <div id="position-list" class="bg-white rounded-lg shadow-sm overflow-hidden mb-4">
-        <table class="min-w-full divide-y divide-gray-200">
+        <div class="table-responsive">
+          <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
               <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -474,7 +487,8 @@
               </td>
             </tr>
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -501,7 +515,7 @@
               </h3>
             </div>
             <div class="p-4">
-              <div class="overflow-x-auto">
+              <div class="table-responsive">
                 <table class="min-w-full">
                   <thead class="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <tr>
@@ -534,7 +548,7 @@
               </h3>
             </div>
             <div class="p-4">
-              <div class="overflow-x-auto">
+              <div class="table-responsive">
                 <table class="min-w-full">
                   <thead class="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <tr>
@@ -681,7 +695,6 @@
     let currentFundData = null;
     let positionList = [];
     let originalPositionList = [];
-    let historyStack = [];
 
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
@@ -758,28 +771,9 @@
     });
 
     // 切换选项卡
-    function switchTab(tab, fromHistory = false) {
-      // 获取当前激活的选项卡
-      let currentTab = '';
-      const tabs = ['home', 'query', 'position', 'ranking', 'news'];
-      tabs.forEach(t => {
-        if (document.getElementById(`tab-${t}`).classList.contains('tab-active')) {
-          currentTab = t;
-        }
-      });
-      
-      // 记录历史记录（除非是从历史记录返回）
-      if (!fromHistory && currentTab) {
-        historyStack.push(currentTab);
-        // 限制历史记录长度
-        if (historyStack.length > 10) {
-          historyStack.shift();
-        }
-      }
-      
-      console.log('历史记录：', historyStack);
-      
+    function switchTab(tab) {
       // 重置所有选项卡和面板
+      const tabs = ['home', 'query', 'position', 'ranking', 'news'];
       tabs.forEach(t => {
         document.getElementById(`tab-${t}`).classList.remove('tab-active');
         document.getElementById(`tab-${t}`).classList.add('text-gray-500', 'hover:text-gray-700');
@@ -817,9 +811,6 @@
         stopRankingAutoRefresh();
         stopNewsAutoRefresh();
       }
-      
-      // 更新返回按钮状态
-      updateBackButton();
     }
     
     // 首页查询基金
@@ -2108,27 +2099,6 @@
       
       // 触发查询操作
       queryFund();
-    }
-
-    // 返回上一步
-    function goBack() {
-      if (historyStack.length > 0) {
-        const previousTab = historyStack.pop();
-        console.log('返回上一步：', previousTab);
-        switchTab(previousTab, true);
-      }
-    }
-    
-    // 更新返回按钮状态
-    function updateBackButton() {
-      const backBtn = document.getElementById('back-btn');
-      if (backBtn) {
-        if (historyStack.length > 0) {
-          backBtn.classList.remove('hidden');
-        } else {
-          backBtn.classList.add('hidden');
-        }
-      }
     }
     
     // 更新批量删除按钮状态
