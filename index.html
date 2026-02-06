@@ -311,22 +311,22 @@
       <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4 border-l-4 border-info">
         <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">最新资讯</h2>
         <div class="space-y-3 sm:space-y-4">
-          <div class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer" onclick="switchTab('news')">
+          <a href="https://www.baidu.com/s?wd=央行降准0.5个百分点，释放长期资金约1.2万亿元" target="_blank" class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer">
             <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Central%20Bank%20monetary%20policy%20news&image_size=portrait_4_3" alt="新闻" class="w-16 sm:w-24 h-16 sm:h-24 object-cover rounded-lg flex-shrink-0">
             <div class="flex-1">
               <h3 class="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">央行降准0.5个百分点，释放长期资金约1.2万亿元</h3>
               <p class="text-xs text-gray-500 mb-1 sm:mb-2">中国证券报 · 今天</p>
               <p class="text-xs text-gray-600 line-clamp-2">央行决定于近日下调金融机构存款准备金率0.5个百分点，此次降准预计将释放长期资金约1.2万亿元，有助于保持流动性合理充裕...</p>
             </div>
-          </div>
-          <div class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer" onclick="switchTab('news')">
+          </a>
+          <a href="https://www.baidu.com/s?wd=A股三大指数集体上涨，创业板指表现强势" target="_blank" class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer">
             <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Stock%20market%20rising%20trend&image_size=portrait_4_3" alt="新闻" class="w-16 sm:w-24 h-16 sm:h-24 object-cover rounded-lg flex-shrink-0">
             <div class="flex-1">
               <h3 class="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">A股三大指数集体上涨，创业板指表现强势</h3>
               <p class="text-xs text-gray-500 mb-1 sm:mb-2">上海证券报 · 今天</p>
               <p class="text-xs text-gray-600 line-clamp-2">今日，A股市场表现强势，三大指数集体上涨。截至收盘，上证指数涨1.23%，深证成指涨1.87%，创业板指涨2.15%，行业板块多数上涨...</p>
             </div>
-          </div>
+          </a>
         </div>
         <div class="mt-3 sm:mt-4 text-right">
           <button class="btn btn-secondary text-xs sm:text-sm py-1 sm:py-1.5 px-3 sm:px-4" onclick="switchTab('news')">
@@ -2036,6 +2036,7 @@
       let todayProfit = 0;
       let holdProfit = 0;
       let totalCost = 0;
+      let totalValue = 0;
 
       positions.forEach(position => {
         if (!position) return;
@@ -2051,6 +2052,7 @@
         todayProfit += shares * (estimate - cost) * (dayChange / 100);
         holdProfit += shares * (estimate - cost);
         totalCost += shares * cost;
+        totalValue += shares * estimate;
       });
 
       const totalRate = totalCost > 0 ? (holdProfit / totalCost * 100) : 0;
@@ -2062,6 +2064,7 @@
       document.getElementById('today-profit').textContent = `¥${todayProfit.toFixed(2)}`;
       document.getElementById('hold-profit').textContent = `¥${holdProfit.toFixed(2)}`;
       document.getElementById('total-rate').textContent = `${totalRate.toFixed(2)}%`;
+      document.getElementById('account-asset').textContent = `¥${totalValue.toFixed(2)}`;
 
       // 设置收益颜色
       const todayProfitElement = document.getElementById('today-profit');
