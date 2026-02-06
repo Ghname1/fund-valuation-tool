@@ -179,7 +179,6 @@
 
       <!-- 快速操作区 -->
       <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4">
-        <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">热门查询</h2>
         <div class="flex flex-col md:flex-row gap-3 sm:gap-4">
           <input
             type="text"
@@ -213,33 +212,61 @@
         <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-primary">
           <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">市场概览</h2>
           <div class="space-y-3 sm:space-y-4">
-            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+            <!-- A股指数 -->
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('sh000001', '上证指数')">
               <div class="flex items-center">
                 <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
                 <span class="text-xs sm:text-sm font-medium">上证指数</span>
               </div>
               <span class="text-xs sm:text-sm font-semibold text-up">+1.23%</span>
             </div>
-            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('sz399001', '深证成指')">
               <div class="flex items-center">
                 <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
                 <span class="text-xs sm:text-sm font-medium">深证成指</span>
               </div>
               <span class="text-xs sm:text-sm font-semibold text-up">+1.87%</span>
             </div>
-            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('sz399006', '创业板指')">
               <div class="flex items-center">
                 <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
                 <span class="text-xs sm:text-sm font-medium">创业板指</span>
               </div>
               <span class="text-xs sm:text-sm font-semibold text-up">+2.15%</span>
             </div>
-            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg">
+            
+            <!-- 港股指数 -->
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('hkHSI', '恒生指数')">
               <div class="flex items-center">
-                <i class="fa fa-money text-primary mr-2 sm:mr-3"></i>
-                <span class="text-xs sm:text-sm font-medium">北向资金</span>
+                <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
+                <span class="text-xs sm:text-sm font-medium">恒生指数</span>
               </div>
-              <span class="text-xs sm:text-sm font-semibold text-up">+85.6亿</span>
+              <span class="text-xs sm:text-sm font-semibold text-up">+0.85%</span>
+            </div>
+            
+            <!-- 亚太指数 -->
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('jpN225', '日经225')">
+              <div class="flex items-center">
+                <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
+                <span class="text-xs sm:text-sm font-medium">日经225</span>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-up">+1.56%</span>
+            </div>
+            
+            <!-- 美股指数 -->
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('usDJI', '道琼斯')">
+              <div class="flex items-center">
+                <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
+                <span class="text-xs sm:text-sm font-medium">道琼斯</span>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-up">+0.67%</span>
+            </div>
+            <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" onclick="viewIndexDetail('usSPX', '标普500')">
+              <div class="flex items-center">
+                <i class="fa fa-line-chart text-primary mr-2 sm:mr-3"></i>
+                <span class="text-xs sm:text-sm font-medium">标普500</span>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-up">+0.98%</span>
             </div>
           </div>
         </div>
@@ -327,9 +354,9 @@
         <p class="text-xs text-gray-500 mt-1">支持6位数字基金代码或基金名称查询，如：000001 或 华夏成长混合</p>
       </div>
 
-      <!-- 快速查询按钮 -->
+      <!-- 热门基金按钮 -->
       <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <h2 class="text-sm font-semibold mb-3">快速查询</h2>
+        <h2 class="text-sm font-semibold mb-3">热门基金</h2>
         <div class="flex flex-wrap gap-2">
           <button class="btn btn-secondary text-xs py-1 px-3" onclick="quickQueryFund('000001')">华夏成长混合</button>
           <button class="btn btn-secondary text-xs py-1 px-3" onclick="quickQueryFund('000020')">景顺长城品质投资混合A</button>
@@ -407,8 +434,13 @@
     <div id="panel-position" class="hidden fade-enter">
       <!-- 持仓概览 -->
       <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <h2 class="text-md font-semibold mb-3">账户汇总</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-md font-semibold">账户汇总</h2>
+          <button class="btn btn-secondary text-xs py-1 px-3" onclick="toggleAssetVisibility()" id="asset-toggle">
+            <i class="fa fa-eye mr-1"></i>隐藏资产
+          </button>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div class="text-center p-2">
             <p class="text-xs text-gray-500">总持仓</p>
             <p class="text-lg font-medium" id="total-positions">0</p>
@@ -424,6 +456,10 @@
           <div class="text-center p-2">
             <p class="text-xs text-gray-500">整体收益率</p>
             <p class="text-lg font-medium" id="total-rate">0.00%</p>
+          </div>
+          <div class="text-center p-2">
+            <p class="text-xs text-gray-500">账户资产</p>
+            <p class="text-lg font-medium" id="account-asset">¥0.00</p>
           </div>
         </div>
       </div>
@@ -535,8 +571,8 @@
       <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-lg font-semibold">市场涨跌榜</h2>
-          <button class="btn btn-primary" onclick="refreshRanking()">
-            <i class="fa fa-refresh mr-2"></i>刷新榜单
+          <button class="btn btn-primary hover:bg-primary/90 transition-all duration-300 shadow-sm hover:shadow" onclick="refreshRanking()">
+            <i class="fa fa-refresh mr-2"></i>刷新
           </button>
         </div>
         <p class="text-sm text-gray-500 mb-4">展示市场上表现最好和最差的基金，数据仅供参考</p>
@@ -619,8 +655,8 @@
       <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-lg font-semibold">投资板块新闻资讯</h2>
-          <button class="btn btn-primary" onclick="refreshNews()">
-            <i class="fa fa-refresh mr-2"></i>刷新新闻
+          <button class="btn btn-primary hover:bg-primary/90 transition-all duration-300 shadow-sm hover:shadow" onclick="refreshNews()">
+            <i class="fa fa-refresh mr-2"></i>刷新
           </button>
         </div>
         <p class="text-sm text-gray-500 mb-4">实时抓取投资相关新闻，助您把握市场动态</p>
@@ -2291,6 +2327,26 @@
       queryFund();
     }
     
+    // 查看指数详情
+    function viewIndexDetail(indexCode, indexName) {
+      // 确保指数代码和名称存在
+      if (!indexCode || !indexName) {
+        showToast('指数信息无效');
+        return;
+      }
+      
+      // 显示指数详情（这里可以根据实际需求跳转到对应的指数详情页面）
+      // 目前我们先显示一个提示，实际项目中可以实现更复杂的指数详情页面
+      showToast(`正在加载${indexName}(${indexCode})的详情...`);
+      
+      // 模拟跳转到指数详情页面
+      setTimeout(() => {
+        // 这里可以实现实际的跳转逻辑
+        // 例如：window.location.href = `index_detail.html?code=${indexCode}&name=${encodeURIComponent(indexName)}`;
+        showToast(`已加载${indexName}的详情数据`);
+      }, 1000);
+    }
+    
     // 快速查询基金
     function quickQueryFund(fundCode) {
       // 填充基金代码到输入框
@@ -2762,8 +2818,9 @@
 
     // 抓取热门基金数据
     function fetchHotFunds() {
-      // 使用模拟数据作为热门基金
-      const mockHotFunds = [
+      // 模拟热门搜索基金数据抓取
+      // 这里模拟从平台获取热门搜索基金，实际项目中可替换为真实API调用
+      const allFunds = [
         { code: '000001', name: '华夏成长混合', dayChange: 0.90, estimate: 1.2456 },
         { code: '000020', name: '景顺长城品质投资混合A', dayChange: 3.55, estimate: 1.6234 },
         { code: '000030', name: '华夏新能源车ETF联接A', dayChange: 4.34, estimate: 2.2156 },
@@ -2771,10 +2828,43 @@
         { code: '000022', name: '华夏创业板ETF联接A', dayChange: 3.68, estimate: 1.9456 },
         { code: '000024', name: '嘉实沪深300ETF联接A', dayChange: 2.70, estimate: 1.2678 },
         { code: '000026', name: '华夏上证50ETF联接A', dayChange: 3.23, estimate: 1.3890 },
-        { code: '000028', name: '嘉实中证1000ETF联接A', dayChange: 3.25, estimate: 1.1345 }
+        { code: '000028', name: '嘉实中证1000ETF联接A', dayChange: 3.25, estimate: 1.1345 },
+        { code: '000041', name: '华夏全球科技先锋混合', dayChange: 5.20, estimate: 2.1567 },
+        { code: '000051', name: '嘉实科技前沿股票', dayChange: 3.80, estimate: 1.9876 },
+        { code: '000061', name: '华夏创新驱动混合', dayChange: 2.90, estimate: 1.4567 },
+        { code: '000071', name: '嘉实新能源新材料股票', dayChange: 4.70, estimate: 2.3456 }
       ];
 
-      hotFunds = mockHotFunds;
+      // 模拟热门搜索权重，根据当前日期生成不同的热门基金
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+      
+      // 根据星期几生成不同的热门基金排序
+      const weightedFunds = allFunds.map(fund => {
+        // 基础权重
+        let weight = Math.random() * 100;
+        
+        // 根据星期几调整权重，模拟不同时期的热门程度
+        if (dayOfWeek === 1) { // 周一
+          // 科技类基金更热门
+          if (fund.name.includes('科技')) weight += 50;
+        } else if (dayOfWeek === 3) { // 周三
+          // 新能源类基金更热门
+          if (fund.name.includes('新能源')) weight += 50;
+        } else if (dayOfWeek === 5) { // 周五
+          // 蓝筹类基金更热门
+          if (fund.name.includes('上证50') || fund.name.includes('沪深300')) weight += 50;
+        }
+        
+        return { ...fund, weight };
+      });
+
+      // 按权重排序，取前8个作为热门基金
+      hotFunds = weightedFunds
+        .sort((a, b) => b.weight - a.weight)
+        .slice(0, 8)
+        .map(({ weight, ...fund }) => fund);
+
       renderHotFunds();
       updateHotFundsUpdateTime();
     }
@@ -2838,12 +2928,36 @@
 
       // 如果内容超出容器宽度，启动滚动
       if (totalWidth > containerWidth) {
+        // 翻滚效果实现
+        let scrollStep = 0;
+        const scrollSpeed = 5; // 滚动速度
+        const pauseTime = 2000; // 每张卡片停留时间
+        let isPaused = false;
+
         hotFundsScrollInterval = setInterval(() => {
-          currentScrollPosition += 1;
-          if (currentScrollPosition >= totalWidth - containerWidth + 20) {
-            currentScrollPosition = 0;
+          if (isPaused) return;
+
+          scrollStep += scrollSpeed;
+          
+          // 当滚动到一张卡片的宽度时，暂停并重置
+          if (scrollStep >= cardWidth) {
+            scrollStep = 0;
+            isPaused = true;
+            
+            // 将第一个卡片移到最后面，实现循环翻滚
+            const firstCard = container.firstElementChild;
+            if (firstCard) {
+              container.appendChild(firstCard);
+              container.style.transform = 'translateX(0)';
+            }
+
+            // 暂停一段时间后继续滚动
+            setTimeout(() => {
+              isPaused = false;
+            }, pauseTime);
+          } else {
+            container.style.transform = `translateX(-${scrollStep}px)`;
           }
-          container.style.transform = `translateX(-${currentScrollPosition}px)`;
         }, 30);
       }
     }
