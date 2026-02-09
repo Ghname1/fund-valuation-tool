@@ -478,10 +478,34 @@ function toggleAssetVisibility() {
   
   if (isAssetVisible) {
     toggleBtn.innerHTML = '<i class="fa fa-eye mr-1"></i>隐藏资产';
-    accountAssetElement.style.display = 'block';
+    accountAssetElement.textContent = originalAccountAsset || '¥0.00';
+    // 显示持仓列表份额
+    const shareCells = document.querySelectorAll('#position-table-body td:nth-child(4)');
+    shareCells.forEach(cell => {
+      cell.textContent = cell.dataset.originalShare || '';
+    });
+    // 显示基金走势图和业绩走势
+    const charts = document.querySelectorAll('#fund-chart, #performance-chart');
+    charts.forEach(chart => {
+      chart.style.display = 'block';
+    });
   } else {
     toggleBtn.innerHTML = '<i class="fa fa-eye-slash mr-1"></i>显示资产';
-    accountAssetElement.style.display = 'none';
+    // 保存原始账户资产
+    window.originalAccountAsset = accountAssetElement.textContent;
+    // 显示***
+    accountAssetElement.textContent = '***';
+    // 隐藏持仓列表份额
+    const shareCells = document.querySelectorAll('#position-table-body td:nth-child(4)');
+    shareCells.forEach(cell => {
+      cell.dataset.originalShare = cell.textContent;
+      cell.textContent = '***';
+    });
+    // 隐藏基金走势图和业绩走势
+    const charts = document.querySelectorAll('#fund-chart, #performance-chart');
+    charts.forEach(chart => {
+      chart.style.display = 'none';
+    });
   }
 }
 
