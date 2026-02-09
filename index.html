@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>估值宝 · 简单好用的基金估值工具</title>
   <meta name="description" content="估值宝是一款简单好用的基金估值查询工具，支持快速查看基金当前估值情况，帮助你轻松判断买卖时机，适合日常参考，不构成投资建议。">
+  <!-- PWA 相关元数据 -->
+  <meta name="theme-color" content="#3b82f6">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Simple%20modern%20logo%20for%20financial%20tool%20called%20%22GuZhiBao%22%20with%20chart%20icon%20and%20blue%20color%20scheme&image_size=square">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="估值宝">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
@@ -3136,6 +3143,19 @@
       currentScrollPosition = 0;
       setTimeout(startHotFundsScroll, 100);
     });
+
+    // 注册Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(function(registration) {
+            console.log('Service Worker 注册成功:', registration.scope);
+          })
+          .catch(function(error) {
+            console.log('Service Worker 注册失败:', error);
+          });
+      });
+    }
   </script>
 </body>
 </html>
