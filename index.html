@@ -16,6 +16,7 @@
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -204,6 +205,9 @@
           <h1 class="text-xl font-bold text-primary">估值宝</h1>
         </div>
         <div class="flex items-center gap-2">
+          <button id="auth-btn" class="btn btn-secondary text-sm py-1 px-3" onclick="switchTab('auth')">
+            <i class="fa fa-sign-in mr-1"></i> 登录
+          </button>
           <button id="theme-toggle" class="p-2 rounded-md hover:bg-gray-200" onclick="toggleTheme()" title="切换主题">
             <i class="fa fa-sun-o"></i>
           </button>
@@ -240,6 +244,10 @@
         <button id="tab-compare" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('compare')">
           <i class="fa fa-balance-scale mr-1 sm:mr-2"></i>
           <span class="hidden sm:inline">基金对比</span>
+        </button>
+        <button id="tab-auth" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('auth')">
+          <i class="fa fa-user mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">登录/注册</span>
         </button>
       </div>
     </div>
@@ -845,6 +853,81 @@
         </div>
       </div>
     </div>
+
+    <!-- 登录面板 -->
+    <div id="panel-auth" class="hidden fade-enter">
+      <div class="max-w-md mx-auto bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">用户登录</h2>
+          <button class="text-sm text-primary hover:underline" onclick="toggleAuthMode()">
+            切换到注册
+          </button>
+        </div>
+        
+        <!-- 登录表单 -->
+        <div id="login-form" class="space-y-4">
+          <div>
+            <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+            <input type="email" id="login-email" class="input w-full" placeholder="请输入邮箱">
+          </div>
+          <div>
+            <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+            <input type="password" id="login-password" class="input w-full" placeholder="请输入密码">
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input type="checkbox" id="remember-me" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+              <label for="remember-me" class="ml-2 block text-sm text-gray-700">记住我</label>
+            </div>
+            <div class="text-sm">
+              <a href="#" class="font-medium text-primary hover:text-primary/80">忘记密码?</a>
+            </div>
+          </div>
+          <button class="btn btn-primary w-full" onclick="loginUser()">
+            登录
+          </button>
+        </div>
+        
+        <!-- 注册表单 -->
+        <div id="register-form" class="space-y-4 hidden">
+          <div class="text-xs text-gray-500 mb-4">
+            <p>密码要求：</p>
+            <ul class="list-disc list-inside mt-1 space-y-1">
+              <li>至少6个字符</li>
+              <li>包含至少一个字母</li>
+              <li>包含至少一个数字</li>
+              <li>推荐包含大小写字母和特殊字符</li>
+            </ul>
+          </div>
+          <div>
+            <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
+            <input type="text" id="register-name" class="input w-full" placeholder="请输入用户名">
+          </div>
+          <div>
+            <label for="register-email" class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+            <input type="email" id="register-email" class="input w-full" placeholder="请输入邮箱">
+          </div>
+          <div>
+            <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+            <input type="password" id="register-password" class="input w-full" placeholder="请输入密码" oninput="checkPasswordStrength(this.value)">
+            <!-- 密码强度指示器 -->
+            <div class="mt-2">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs text-gray-500">密码强度</span>
+                <span id="password-strength-level" class="text-xs">请输入密码</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div id="password-strength-bar" class="h-2 rounded-full bg-gray-300" style="width: 0%"></div>
+              </div>
+              <p id="password-strength-message" class="text-xs text-gray-500 mt-1"></p>
+            </div>
+          </div>
+          <button class="btn btn-primary w-full" onclick="registerUser()">
+            注册
+          </button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- 底部信息 -->
@@ -980,6 +1063,9 @@
       // 初始化主题
       initTheme();
       
+      // 初始化认证状态
+      updateAuthUI();
+      
       // 确保positionList有数据
       try {
         positionList = JSON.parse(localStorage.getItem('positionList')) || [];
@@ -1061,7 +1147,7 @@
     // 切换选项卡
     function switchTab(tab) {
       // 重置所有选项卡和面板
-      const tabs = ['home', 'query', 'position', 'ranking', 'news'];
+      const tabs = ['home', 'query', 'position', 'ranking', 'news', 'compare', 'auth'];
       tabs.forEach(t => {
         document.getElementById(`tab-${t}`).classList.remove('tab-active');
         document.getElementById(`tab-${t}`).classList.add('text-gray-500', 'hover:text-gray-700');
@@ -1095,7 +1181,7 @@
         // 停止其他自动刷新
         stopNewsAutoRefresh();
       } else {
-        // 切换到首页或查询选项卡时停止所有自动刷新
+        // 切换到首页、查询、对比或登录选项卡时停止所有自动刷新
         stopRankingAutoRefresh();
         stopNewsAutoRefresh();
       }
@@ -3155,6 +3241,134 @@
             console.log('Service Worker 注册失败:', error);
           });
       });
+    }
+
+    // 切换认证模式
+    function toggleAuthMode() {
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const authTitle = document.querySelector('#panel-auth h2');
+      const toggleBtn = document.querySelector('#panel-auth button');
+      
+      if (loginForm.classList.contains('hidden')) {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        authTitle.textContent = '用户登录';
+        toggleBtn.textContent = '切换到注册';
+      } else {
+        loginForm.classList.add('hidden');
+        registerForm.classList.remove('hidden');
+        authTitle.textContent = '用户注册';
+        toggleBtn.textContent = '切换到登录';
+      }
+    }
+
+    // 登录用户
+    async function loginUser() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      
+      if (!email || !password) {
+        showToast('请输入邮箱和密码');
+        return;
+      }
+      
+      const result = await AuthModule.login(email, password);
+      
+      if (result.success) {
+        showToast('登录成功');
+        updateAuthUI();
+        switchTab('home');
+      } else {
+        showToast(result.message);
+      }
+    }
+
+    // 注册用户
+    async function registerUser() {
+      const name = document.getElementById('register-name').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+      
+      if (!name || !email || !password) {
+        showToast('请填写完整信息');
+        return;
+      }
+      
+      // 验证密码强度
+      const passwordValidation = PasswordValidator.validatePolicy(password);
+      if (!passwordValidation.valid) {
+        showToast(passwordValidation.errors[0]);
+        return;
+      }
+      
+      // 检查密码强度
+      const strength = PasswordValidator.checkStrength(password);
+      if (strength < 30) {
+        showToast('密码强度太弱，请使用更强的密码');
+        return;
+      }
+      
+      const result = await AuthModule.register(email, password, name);
+      
+      if (result.success) {
+        showToast('注册成功');
+        updateAuthUI();
+        switchTab('home');
+      } else {
+        showToast(result.message);
+      }
+    }
+
+    // 更新认证UI
+    function updateAuthUI() {
+      const user = AuthModule.getCurrentUser();
+      const authBtn = document.getElementById('auth-btn');
+      
+      if (user) {
+        authBtn.innerHTML = `<i class="fa fa-user mr-1"></i> ${user.name}`;
+        authBtn.onclick = function() {
+          // 显示个人中心下拉菜单
+          alert('个人中心功能开发中');
+        };
+      } else {
+        authBtn.innerHTML = '<i class="fa fa-sign-in mr-1"></i> 登录';
+        authBtn.onclick = function() {
+          switchTab('auth');
+        };
+      }
+    }
+
+    // 登出
+    function logoutUser() {
+      AuthModule.logout();
+      showToast('已登出');
+      updateAuthUI();
+    }
+
+    // 检查密码强度
+    function checkPasswordStrength(password) {
+      const strength = PasswordValidator.checkStrength(password);
+      const levelInfo = PasswordValidator.getStrengthLevel(strength);
+      
+      // 更新强度指示器
+      const strengthBar = document.getElementById('password-strength-bar');
+      const strengthLevel = document.getElementById('password-strength-level');
+      const strengthMessage = document.getElementById('password-strength-message');
+      
+      if (password) {
+        strengthBar.style.width = strength + '%';
+        strengthBar.className = `h-2 rounded-full ${levelInfo.class.replace('text-', 'bg-')}`;
+        strengthLevel.className = `text-xs ${levelInfo.class}`;
+        strengthLevel.textContent = levelInfo.level;
+        strengthMessage.textContent = levelInfo.message;
+      } else {
+        strengthBar.style.width = '0%';
+        strengthBar.className = 'h-2 rounded-full bg-gray-300';
+        strengthLevel.className = 'text-xs';
+        strengthLevel.textContent = '请输入密码';
+        strengthMessage.textContent = '';
+      }
     }
   </script>
 </body>
