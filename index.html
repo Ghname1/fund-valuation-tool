@@ -249,6 +249,10 @@
           <i class="fa fa-user mr-1 sm:mr-2"></i>
           <span class="hidden sm:inline">登录/注册</span>
         </button>
+        <button id="tab-watchlist" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('watchlist')">
+          <i class="fa fa-star mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">关注列表</span>
+        </button>
       </div>
     </div>
 
@@ -854,6 +858,28 @@
       </div>
     </div>
 
+    <!-- 关注列表面板 -->
+    <div id="panel-watchlist" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">基金关注列表</h2>
+          <button class="btn btn-primary" onclick="showAddToWatchlistModal()">
+            <i class="fa fa-plus mr-1"></i> 添加基金
+          </button>
+        </div>
+        
+        <!-- 关注列表 -->
+        <div id="watchlist-content" class="space-y-4">
+          <!-- 关注列表数据将通过JavaScript动态添加 -->
+          <div class="text-center py-8 text-gray-500" id="empty-watchlist">
+            <i class="fa fa-star-o text-2xl mb-2"></i>
+            <p>关注列表为空</p>
+            <p class="text-xs mt-1">点击"添加基金"按钮开始关注基金</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 登录面板 -->
     <div id="panel-auth" class="hidden fade-enter">
       <div class="max-w-md mx-auto bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -1147,7 +1173,7 @@
     // 切换选项卡
     function switchTab(tab) {
       // 重置所有选项卡和面板
-      const tabs = ['home', 'query', 'position', 'ranking', 'news', 'compare', 'auth'];
+      const tabs = ['home', 'query', 'position', 'ranking', 'news', 'compare', 'auth', 'watchlist'];
       tabs.forEach(t => {
         document.getElementById(`tab-${t}`).classList.remove('tab-active');
         document.getElementById(`tab-${t}`).classList.add('text-gray-500', 'hover:text-gray-700');
@@ -1179,6 +1205,12 @@
         refreshRanking();
         startRankingAutoRefresh();
         // 停止其他自动刷新
+        stopNewsAutoRefresh();
+      } else if (tab === 'watchlist') {
+        console.log('切换到关注列表面板');
+        renderWatchlist();
+        // 停止其他自动刷新
+        stopRankingAutoRefresh();
         stopNewsAutoRefresh();
       } else {
         // 切换到首页、查询、对比或登录选项卡时停止所有自动刷新
@@ -3370,6 +3402,124 @@
         strengthMessage.textContent = '';
       }
     }
+
+    // 关注列表相关函数
+    function showAddToWatchlistModal() {
+      document.getElementById('add-watchlist-modal').classList.remove('hidden');
+    }
+
+    function closeAddToWatchlistModal() {
+      document.getElementById('add-watchlist-modal').classList.add('hidden');
+    }
+
+    function addToWatchlist() {
+      const fundCode = document.getElementById('watchlist-fund-code').value.trim();
+      const fundName = document.getElementById('watchlist-fund-name').value.trim();
+
+      if (!fundCode) {
+        showToast('请输入基金代码');
+        return;
+      }
+
+      // 获取关注列表
+      let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+
+      // 检查是否已在关注列表中
+      if (watchlist.some(item => item.code === fundCode)) {
+        showToast('该基金已在关注列表中');
+        return;
+      }
+
+      // 添加到关注列表
+      watchlist.push({
+        code: fundCode,
+        name: fundName || `基金${fundCode}`,
+        addedAt: new Date().toISOString()
+      });
+
+      // 保存关注列表
+      localStorage.setItem('watchlist', JSON.stringify(watchlist));
+
+      // 关闭弹窗
+      closeAddToWatchlistModal();
+
+      // 刷新关注列表
+      renderWatchlist();
+
+      showToast('基金已添加到关注列表');
+    }
+
+    function renderWatchlist() {
+      const watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+      const watchlistContent = document.getElementById('watchlist-content');
+      const emptyWatchlist = document.getElementById('empty-watchlist');
+
+      // 清空关注列表
+      watchlistContent.innerHTML = '';
+
+      if (watchlist.length === 0) {
+        // 显示空状态
+        emptyWatchlist.style.display = 'block';
+        return;
+      }
+
+      // 隐藏空状态
+      emptyWatchlist.style.display = 'none';
+
+      // 渲染关注列表
+      watchlist.forEach((fund, index) => {
+        const fundItem = document.createElement('div');
+        fundItem.className = 'bg-gray-50 p-4 rounded-lg flex justify-between items-center';
+        fundItem.innerHTML = `
+          <div>
+            <h4 class="font-medium">${fund.name}</h4>
+            <p class="text-xs text-gray-500">${fund.code}</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary text-xs" onclick="viewFundDetail('${fund.code}')">
+              <i class="fa fa-eye mr-1"></i> 查看
+            </button>
+            <button class="btn btn-danger text-xs" onclick="removeFromWatchlist(${index})">
+              <i class="fa fa-trash mr-1"></i> 删除
+            </button>
+          </div>
+        `;
+        watchlistContent.appendChild(fundItem);
+      });
+    }
+
+    function removeFromWatchlist(index) {
+      let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+      watchlist.splice(index, 1);
+      localStorage.setItem('watchlist', JSON.stringify(watchlist));
+      renderWatchlist();
+      showToast('基金已从关注列表中删除');
+    }
   </script>
+
+  <!-- 添加到关注列表弹窗 -->
+  <div id="add-watchlist-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all duration-300">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium">添加基金到关注列表</h3>
+      </div>
+      <div class="px-6 py-4">
+        <div class="space-y-4">
+          <div>
+            <label for="watchlist-fund-code" class="block text-sm font-medium text-gray-700 mb-1">基金代码</label>
+            <input type="text" id="watchlist-fund-code" class="input w-full" placeholder="请输入基金代码">
+          </div>
+          <div>
+            <label for="watchlist-fund-name" class="block text-sm font-medium text-gray-700 mb-1">基金名称</label>
+            <input type="text" id="watchlist-fund-name" class="input w-full" placeholder="请输入基金名称" readonly>
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+        <button class="btn btn-secondary" onclick="closeAddToWatchlistModal()">取消</button>
+        <button class="btn btn-primary" onclick="addToWatchlist()">添加</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
