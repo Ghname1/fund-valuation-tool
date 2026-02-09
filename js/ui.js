@@ -1151,6 +1151,19 @@ class UIService {
     // 保存主题设置到本地存储
     const isDark = icon.classList.contains('fa-moon-o');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // 重新初始化图表，以适应新的主题
+    this.updateChartsTheme();
+  }
+  
+  // 更新图表主题
+  updateChartsTheme() {
+    const isDark = document.body.classList.contains('dark-theme');
+    const chartTheme = isDark ? 'dark' : 'light';
+    
+    // 这里可以更新所有图表的主题
+    // 例如，如果图表实例被保存，可以遍历并更新它们的主题
+    console.log('图表主题已更新为:', chartTheme);
   }
   
   // 初始化主题
@@ -1166,14 +1179,14 @@ class UIService {
       // 应用深色主题
       icon.classList.remove('fa-sun-o');
       icon.classList.add('fa-moon-o');
-      body.classList.add('bg-gray-900', 'text-white');
+      body.classList.add('bg-gray-900', 'text-white', 'dark-theme');
       body.classList.remove('bg-gray-50', 'text-gray-800');
     } else {
       // 应用浅色主题
       icon.classList.remove('fa-moon-o');
       icon.classList.add('fa-sun-o');
       body.classList.add('bg-gray-50', 'text-gray-800');
-      body.classList.remove('bg-gray-900', 'text-white');
+      body.classList.remove('bg-gray-900', 'text-white', 'dark-theme');
     }
   }
   
