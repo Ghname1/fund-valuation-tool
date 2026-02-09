@@ -320,6 +320,11 @@ class UIService {
         
         // 显示成功提示
         this.showToast('基金估值查询成功');
+        
+        // 初始化基金走势图
+        this.initFundChart(fundCode, fundData);
+        // 初始化业绩走势图表
+        this.initPerformanceChart(fundCode, fundData);
       } else {
         // 显示错误信息
         if (errorElement) errorElement.classList.remove('hidden');
@@ -738,6 +743,11 @@ class UIService {
       
       newsContent.appendChild(newsItem);
     });
+    
+    // 导入并调用懒加载服务观察新添加的图片
+    import('./lazyLoad.js').then(({ default: lazyLoad }) => {
+      lazyLoad.observeImages();
+    });
   }
   
   // 刷新热门基金
@@ -848,6 +858,158 @@ class UIService {
           container.style.transform = `translateX(-${scrollStep}px)`;
         }
       }, 30);
+    }
+  }
+  
+  // 初始化基金走势图
+  initFundChart(fundCode, fundData) {
+    const chartDom = document.getElementById('fund-chart');
+    if (!chartDom) return;
+    
+    try {
+      // 使用ECharts初始化图表
+      const myChart = echarts.init(chartDom);
+      
+      // 模拟历史数据
+      const dates = [];
+      const values = [];
+      const now = new Date();
+      
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        dates.push(`${date.getMonth() + 1}/${date.getDate()}`);
+        // 生成模拟数据
+        const baseValue = parseFloat(fundData.dwjz);
+        const randomChange = (Math.random() - 0.45) * 0.1; // -4.5% 到 5.5% 的随机变化
+        values.push((baseValue * (1 + randomChange)).toFixed(4));
+      }
+      
+      // 图表配置
+      const option = {
+        title: {
+          text: '基金净值走势',
+          left: 'center',
+          textStyle: {
+            fontSize: 14
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          formatter: function(params) {
+            return params[0].name + '<br/>净值: ¥' + params[0].value;
+          }
+        },
+        xAxis: {
+          type: 'category',
+          data: dates,
+          axisLabel: {
+            rotate: 45,
+            fontSize: 10
+          }
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: '¥{value}'
+          }
+        },
+        series: [{
+          data: values,
+          type: 'line',
+          smooth: true,
+          lineStyle: {
+            color: '#3b82f6'
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+              { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+            ])
+          }
+        }]
+      };
+      
+      // 设置图表配置
+      myChart.setOption(option);
+      
+      // 响应式处理
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      });
+    } catch (error) {
+      console.error('初始化基金走势图失败:', error);
+    }
+  }
+  
+  // 初始化业绩走势图表
+  initPerformanceChart(fundCode, fundData) {
+    const chartDom = document.getElementById('performance-chart');
+    if (!chartDom) return;
+    
+    try {
+      // 使用ECharts初始化图表
+      const myChart = echarts.init(chartDom);
+      
+      // 模拟业绩数据
+      const periods = ['1周', '1月', '3月', '6月', '1年', '3年'];
+      const returns = [];
+      
+      // 生成模拟数据
+      for (let i = 0; i < periods.length; i++) {
+        const baseReturn = fundData.dayChange * (i + 1);
+        const randomAdjustment = (Math.random() - 0.5) * 5;
+        returns.push((baseReturn + randomAdjustment).toFixed(2));
+      }
+      
+      // 图表配置
+      const option = {
+        title: {
+          text: '业绩表现',
+          left: 'center',
+          textStyle: {
+            fontSize: 14
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          },
+          formatter: function(params) {
+            return params[0].name + '<br/>收益率: ' + params[0].value + '%';
+          }
+        },
+        xAxis: {
+          type: 'category',
+          data: periods
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: '{value}%'
+          }
+        },
+        series: [{
+          data: returns,
+          type: 'bar',
+          itemStyle: {
+            color: function(params) {
+              return parseFloat(params.value) >= 0 ? '#ef4444' : '#10b981';
+            }
+          }
+        }]
+      };
+      
+      // 设置图表配置
+      myChart.setOption(option);
+      
+      // 响应式处理
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      });
+    } catch (error) {
+      console.error('初始化业绩走势图表失败:', error);
     }
   }
   
