@@ -225,8 +225,15 @@ class DataService {
         source: '上海证券报',
         time: '今天',
         content: '今日，A股市场表现强势，三大指数集体上涨。截至收盘，上证指数涨1.23%，深证成指涨1.87%，创业板指涨2.15%，行业板块多数上涨，新能源、半导体等科技类板块表现尤为突出。',
-        image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Stock%20market%20rising%20trend&image_size=portrait_4_3',
         link: 'https://www.baidu.com/s?wd=A股三大指数集体上涨，创业板指表现强势'
+      },
+      {
+        title: '新能源板块持续走强，多只基金净值大幅上涨',
+        source: '证券时报',
+        time: '今天',
+        content: '受益于政策支持和行业景气度提升，新能源板块近期持续走强，多只新能源主题基金净值大幅上涨。业内人士表示，新能源行业长期发展空间广阔，建议投资者关注相关基金的投资机会。',
+        image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=New%20energy%20industry%20growth%20chart&image_size=portrait_4_3',
+        link: 'https://www.baidu.com/s?wd=新能源板块持续走强，多只基金净值大幅上涨'
       }
     ];
   }

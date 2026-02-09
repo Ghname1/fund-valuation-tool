@@ -951,21 +951,40 @@ class UIService {
       // 使用ECharts初始化图表
       const myChart = echarts.init(chartDom);
       
-      // 模拟业绩数据
-      const periods = ['1周', '1月', '3月', '6月', '1年', '3年'];
-      const returns = [];
+      // 模拟日期数据
+      const dates = [];
+      const now = new Date();
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        dates.push(`${date.getMonth() + 1}-${date.getDate()}`);
+      }
+      
+      // 模拟本基金数据
+      const fundDataValues = [];
+      // 模拟沪深300数据
+      const hs300Values = [];
       
       // 生成模拟数据
-      for (let i = 0; i < periods.length; i++) {
-        const baseReturn = fundData.dayChange * (i + 1);
-        const randomAdjustment = (Math.random() - 0.5) * 5;
-        returns.push((baseReturn + randomAdjustment).toFixed(2));
+      let baseValue = 0;
+      let hs300BaseValue = 0;
+      
+      for (let i = 0; i < dates.length; i++) {
+        // 生成随机波动
+        const fundChange = (Math.random() - 0.48) * 0.03; // -2.4% 到 3% 的随机变化
+        const hs300Change = (Math.random() - 0.49) * 0.025; // -2.45% 到 2.55% 的随机变化
+        
+        baseValue += fundChange;
+        hs300BaseValue += hs300Change;
+        
+        fundDataValues.push(baseValue.toFixed(4));
+        hs300Values.push(hs300BaseValue.toFixed(4));
       }
       
       // 图表配置
       const option = {
         title: {
-          text: '业绩表现',
+          text: '业绩走势',
           left: 'center',
           textStyle: {
             fontSize: 14
@@ -973,16 +992,35 @@ class UIService {
         },
         tooltip: {
           trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          },
           formatter: function(params) {
-            return params[0].name + '<br/>收益率: ' + params[0].value + '%';
+            let result = params[0].name + '<br/>';
+            params.forEach(param => {
+              const color = param.color;
+              const seriesName = param.seriesName;
+              const value = param.value;
+              result += `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${color};"></span>${seriesName}: ${value}%<br/>`;
+            });
+            return result;
           }
+        },
+        legend: {
+          data: ['本基金', '沪深300'],
+          bottom: 0
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          top: '15%',
+          containLabel: true
         },
         xAxis: {
           type: 'category',
-          data: periods
+          data: dates,
+          axisLabel: {
+            rotate: 45,
+            fontSize: 10
+          }
         },
         yAxis: {
           type: 'value',
@@ -990,15 +1028,38 @@ class UIService {
             formatter: '{value}%'
           }
         },
-        series: [{
-          data: returns,
-          type: 'bar',
-          itemStyle: {
-            color: function(params) {
-              return parseFloat(params.value) >= 0 ? '#ef4444' : '#10b981';
+        series: [
+          {
+            name: '本基金',
+            data: fundDataValues,
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              color: '#3b82f6'
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+                { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+              ])
+            }
+          },
+          {
+            name: '沪深300',
+            data: hs300Values,
+            type: 'line',
+            smooth: true,
+            lineStyle: {
+              color: '#f97316'
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: 'rgba(249, 115, 22, 0.3)' },
+                { offset: 1, color: 'rgba(249, 115, 22, 0.05)' }
+              ])
             }
           }
-        }]
+        ]
       };
       
       // 设置图表配置
