@@ -32,6 +32,7 @@
       }
     }
   </script>
+  <script type="module" src="js/app.js"></script>
   <style type="text/tailwindcss">
     @layer utilities {
       .content-auto {
@@ -104,7 +105,7 @@
     <div class="container mx-auto px-4 py-3">
       <div class="flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Simple%20modern%20logo%20for%20financial%20tool%20called%20%22GuZhiBao%22%20with%20chart%20icon%20and%20blue%20color%20scheme&image_size=square" alt="估值宝" class="w-8 h-8 rounded-full">
+          <img data-src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Simple%20modern%20logo%20for%20financial%20tool%20called%20%22GuZhiBao%22%20with%20chart%20icon%20and%20blue%20color%20scheme&image_size=square" alt="估值宝" class="w-8 h-8 rounded-full lazy-image">
           <h1 class="text-xl font-bold text-primary">估值宝</h1>
         </div>
         <div class="flex items-center gap-2">
@@ -141,6 +142,10 @@
           <i class="fa fa-newspaper-o mr-1 sm:mr-2"></i>
           <span class="hidden sm:inline">新闻资讯</span>
         </button>
+        <button id="tab-compare" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('compare')">
+          <i class="fa fa-balance-scale mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">基金对比</span>
+        </button>
       </div>
     </div>
 
@@ -172,7 +177,7 @@
             </div>
           </div>
           <div class="w-32 h-32 sm:w-48 sm:h-48 flex-shrink-0">
-            <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Modern%20financial%20dashboard%20with%20fund%20valuation%20charts%2C%20professional%20design%2C%20blue%20color%20scheme&image_size=square" alt="估值宝" class="w-full h-full object-cover rounded-lg shadow-md">
+            <img data-src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Modern%20financial%20dashboard%20with%20fund%20valuation%20charts%2C%20professional%20design%2C%20blue%20color%20scheme&image_size=square" alt="估值宝" class="w-full h-full object-cover rounded-lg shadow-md lazy-image">
           </div>
         </div>
       </div>
@@ -312,7 +317,7 @@
         <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">最新资讯</h2>
         <div class="space-y-3 sm:space-y-4">
           <a href="https://www.baidu.com/s?wd=央行降准0.5个百分点，释放长期资金约1.2万亿元" target="_blank" class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer">
-            <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Central%20Bank%20monetary%20policy%20news&image_size=portrait_4_3" alt="新闻" class="w-16 sm:w-24 h-16 sm:h-24 object-cover rounded-lg flex-shrink-0">
+            <img data-src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Central%20Bank%20monetary%20policy%20news&image_size=portrait_4_3" alt="新闻" class="w-16 sm:w-24 h-16 sm:h-24 object-cover rounded-lg flex-shrink-0 lazy-image">
             <div class="flex-1">
               <h3 class="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">央行降准0.5个百分点，释放长期资金约1.2万亿元</h3>
               <p class="text-xs text-gray-500 mb-1 sm:mb-2">中国证券报 · 今天</p>
@@ -320,7 +325,7 @@
             </div>
           </a>
           <a href="https://www.baidu.com/s?wd=A股三大指数集体上涨，创业板指表现强势" target="_blank" class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer">
-            <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Stock%20market%20rising%20trend&image_size=portrait_4_3" alt="新闻" class="w-16 sm:w-24 h-16 sm:h-24 object-cover rounded-lg flex-shrink-0">
+            <img data-src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Stock%20market%20rising%20trend&image_size=portrait_4_3" alt="新闻" class="w-16 sm:w-24 h-16 sm:h-24 object-cover rounded-lg flex-shrink-0 lazy-image">
             <div class="flex-1">
               <h3 class="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">A股三大指数集体上涨，创业板指表现强势</h3>
               <p class="text-xs text-gray-500 mb-1 sm:mb-2">上海证券报 · 今天</p>
@@ -404,9 +409,12 @@
             <div id="performance-chart" class="w-full h-56 bg-gray-50 rounded-lg p-3"></div>
           </div>
 
-          <div class="mt-4 flex justify-end">
+          <div class="mt-4 flex justify-end gap-3">
             <button class="btn btn-secondary" onclick="showAddPositionModal()">
               <i class="fa fa-plus mr-1"></i>添加到持仓
+            </button>
+            <button class="btn btn-primary" id="add-to-compare-btn" onclick="addToCompare(document.getElementById('fund-code').value.trim())" style="display: none;">
+              <i class="fa fa-balance-scale mr-1"></i>添加到对比
             </button>
           </div>
         </div>
@@ -670,6 +678,42 @@
             <div class="text-center py-8 text-gray-500">
               <i class="fa fa-newspaper-o text-3xl mb-2"></i>
               <p>点击刷新按钮获取新闻资讯</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 基金对比面板 -->
+    <div id="panel-compare" class="hidden fade-enter">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 对比列表 -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+            <div id="compare-list">
+              <!-- 对比列表将通过JavaScript动态添加 -->
+              <div class="p-6 text-center text-gray-500">
+                <i class="fa fa-info-circle text-2xl mb-2"></i>
+                <p>对比列表为空，请先添加基金到对比列表</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 对比内容 -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+            <div class="p-4 border-b border-gray-200">
+              <h2 class="text-lg font-semibold">基金对比</h2>
+            </div>
+            <div class="p-4">
+              <div id="compare-content">
+                <!-- 对比内容将通过JavaScript动态添加 -->
+                <div class="p-8 text-center text-gray-500">
+                  <i class="fa fa-balance-scale text-3xl mb-2"></i>
+                  <p>至少需要添加2个基金才能进行对比</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
