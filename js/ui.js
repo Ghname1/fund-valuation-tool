@@ -325,6 +325,8 @@ class UIService {
         this.initFundChart(fundCode, fundData);
         // 初始化业绩走势图表
         this.initPerformanceChart(fundCode, fundData);
+        // 初始化历史净值表格
+        this.initHistoryTable(fundCode, fundData);
       } else {
         // 显示错误信息
         if (errorElement) errorElement.classList.remove('hidden');
@@ -1072,6 +1074,52 @@ class UIService {
     } catch (error) {
       console.error('初始化业绩走势图表失败:', error);
     }
+  }
+  
+  // 初始化历史净值表格
+  initHistoryTable(fundCode, fundData) {
+    const tableBody = document.getElementById('history-table-body');
+    if (!tableBody) return;
+    
+    // 清空表格
+    tableBody.innerHTML = '';
+    
+    // 模拟历史净值数据
+    const historyData = [
+      { date: '02-06', nav: '1.1578', accNav: '1.1578', change: '-0.64%' },
+      { date: '02-05', nav: '1.1652', accNav: '1.1652', change: '-2.21%' },
+      { date: '02-04', nav: '1.1915', accNav: '1.1915', change: '-2.28%' },
+      { date: '02-03', nav: '1.2193', accNav: '1.2193', change: '+0.61%' },
+      { date: '02-02', nav: '1.2119', accNav: '1.2119', change: '-3.47%' },
+      { date: '01-30', nav: '1.2555', accNav: '1.2555', change: '+0.55%' },
+      { date: '01-29', nav: '1.2486', accNav: '1.2486', change: '-3.61%' },
+      { date: '01-28', nav: '1.2954', accNav: '1.2954', change: '+1.24%' },
+      { date: '01-27', nav: '1.2795', accNav: '1.2795', change: '+2.05%' },
+      { date: '01-26', nav: '1.2538', accNav: '1.2538', change: '-0.81%' }
+    ];
+    
+    // 渲染表格
+    historyData.forEach(item => {
+      const row = document.createElement('tr');
+      row.className = 'border-b border-gray-100 hover:bg-gray-50';
+      
+      // 设置涨跌颜色
+      let changeClass = 'text-gray-500';
+      if (item.change.startsWith('+')) {
+        changeClass = 'text-up';
+      } else if (item.change.startsWith('-')) {
+        changeClass = 'text-down';
+      }
+      
+      row.innerHTML = `
+        <td class="py-2">${item.date}</td>
+        <td class="py-2">${item.nav}</td>
+        <td class="py-2">${item.accNav}</td>
+        <td class="py-2 ${changeClass}">${item.change}</td>
+      `;
+      
+      tableBody.appendChild(row);
+    });
   }
   
   // 切换主题

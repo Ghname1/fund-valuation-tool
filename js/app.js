@@ -557,6 +557,45 @@ function viewFundCompare() {
   ui.renderFundCompare();
 }
 
+// 显示更多历史净值
+function showMoreHistory() {
+  // 这里可以实现显示更多历史净值的功能
+  // 例如打开一个模态框，显示更长时间范围的历史净值数据
+  ui.showToast('显示更多历史净值功能开发中');
+}
+
+// 截图功能
+function screenshotFundData() {
+  const queryResult = document.getElementById('query-result');
+  if (!queryResult) {
+    ui.showToast('请先查询基金估值');
+    return;
+  }
+  
+  // 显示加载提示
+  ui.showToast('正在生成截图...');
+  
+  // 使用html2canvas库生成截图
+  html2canvas(queryResult, {
+    scale: 2, // 提高清晰度
+    useCORS: true, // 允许加载跨域图片
+    logging: false,
+    backgroundColor: '#ffffff'
+  }).then(canvas => {
+    // 创建下载链接
+    const link = document.createElement('a');
+    link.download = `fund_${document.getElementById('fund-code').value}_${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // 显示成功提示
+    ui.showToast('截图生成成功');
+  }).catch(error => {
+    console.error('截图失败:', error);
+    ui.showToast('截图生成失败，请重试');
+  });
+}
+
 // 导出函数
 window.initApp = initApp;
 window.showAddPositionModal = showAddPositionModal;
@@ -580,6 +619,9 @@ window.addToCompare = addToCompare;
 window.removeFromCompare = removeFromCompare;
 window.clearCompareList = clearCompareList;
 window.viewFundCompare = viewFundCompare;
+// 新增函数
+window.showMoreHistory = showMoreHistory;
+window.screenshotFundData = screenshotFundData;
 
 // 导出UI函数
 window.switchTab = ui.switchTab.bind(ui);

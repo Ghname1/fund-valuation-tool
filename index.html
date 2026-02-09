@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -409,12 +410,43 @@
             <div id="performance-chart" class="w-full h-56 bg-gray-50 rounded-lg p-3"></div>
           </div>
 
-          <div class="mt-4 flex justify-end gap-3">
+          <!-- 历史净值 -->
+        <div class="mt-6">
+          <h3 class="text-sm font-semibold mb-3">历史净值</h3>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="font-medium">历史净值</h4>
+              <button class="text-primary hover:text-primary/80 text-sm" onclick="showMoreHistory()">
+                更多 <i class="fa fa-angle-right"></i>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-sm">
+                <thead>
+                  <tr class="border-b border-gray-200">
+                    <th class="py-2 text-left">日期</th>
+                    <th class="py-2 text-left">单位净值</th>
+                    <th class="py-2 text-left">累计净值</th>
+                    <th class="py-2 text-left">日涨幅</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <!-- 历史净值数据将通过JavaScript动态添加 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex justify-end gap-3">
             <button class="btn btn-secondary" onclick="showAddPositionModal()">
               <i class="fa fa-plus mr-1"></i>添加到持仓
             </button>
             <button class="btn btn-primary" id="add-to-compare-btn" onclick="addToCompare(document.getElementById('fund-code').value.trim())" style="display: none;">
               <i class="fa fa-balance-scale mr-1"></i>添加到对比
+            </button>
+            <button class="btn btn-secondary" onclick="screenshotFundData()">
+              <i class="fa fa-camera mr-1"></i>截图
             </button>
           </div>
         </div>
