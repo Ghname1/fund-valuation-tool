@@ -788,7 +788,7 @@ class UIService {
           <span>${news.source}</span>
           <span>${news.time}</span>
         </div>
-        ${news.image ? `<img data-src="${news.image}" alt="${news.title}" class="w-full h-40 object-cover rounded-lg mb-2 lazy-image">` : ''}
+        ${news.image ? `<img src="${news.image}" alt="${news.title}" class="w-full h-40 object-cover rounded-lg mb-2">` : ''}
         <p class="text-sm text-gray-600 line-clamp-2">${news.content.substring(0, 100)}...</p>
       `;
       
