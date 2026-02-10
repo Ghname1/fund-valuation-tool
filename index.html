@@ -253,6 +253,34 @@
           <i class="fa fa-star mr-1 sm:mr-2"></i>
           <span class="hidden sm:inline">关注列表</span>
         </button>
+        <button id="tab-calculator" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('calculator')">
+          <i class="fa fa-calculator mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">定投计算器</span>
+        </button>
+        <button id="tab-analysis" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('analysis')">
+          <i class="fa fa-pie-chart mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">持仓分析</span>
+        </button>
+        <button id="tab-filter" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('filter')">
+          <i class="fa fa-filter mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">基金筛选</span>
+        </button>
+        <button id="tab-hot" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('hot')">
+          <i class="fa fa-fire mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">市场热点</span>
+        </button>
+        <button id="tab-recommend" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('recommend')">
+          <i class="fa fa-thumbs-up mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">个性化推荐</span>
+        </button>
+        <button id="tab-share" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('share')">
+          <i class="fa fa-share-alt mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">投资组合分享</span>
+        </button>
+        <button id="tab-deep-analysis" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('deep-analysis')">
+          <i class="fa fa-bar-chart mr-1 sm:mr-2"></i>
+          <span class="hidden sm:inline">基金深度分析</span>
+        </button>
       </div>
     </div>
 
@@ -290,23 +318,29 @@
       </div>
 
       <!-- 快速操作区 -->
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4">
-        <div class="flex flex-col md:flex-row gap-3 sm:gap-4">
-          <input
-            type="text"
-            id="home-fund-code"
-            class="input flex-1 text-sm sm:text-lg py-2 sm:py-3"
-            placeholder="请输入基金代码或基金名称"
-          >
-          <button class="btn btn-primary whitespace-nowrap py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base" onclick="homeQueryFund()">
-            <i class="fa fa-search mr-1 sm:mr-2"></i>查询
-          </button>
-        </div>
-        <p class="text-xs text-gray-500 mt-1 sm:mt-2">支持6位数字基金代码或基金名称查询，如：000001 或 华夏成长混合</p>
+    <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4">
+      <div class="flex justify-between items-center mb-3 sm:mb-4">
+        <h2 class="text-base sm:text-lg font-semibold">快速操作</h2>
+        <button class="btn btn-secondary text-xs sm:text-sm py-1 sm:py-1.5 px-3 sm:px-4" onclick="showCustomizeModal()">
+          <i class="fa fa-cog mr-1"></i>自定义首页
+        </button>
       </div>
+      <div class="flex flex-col md:flex-row gap-3 sm:gap-4">
+        <input
+          type="text"
+          id="home-fund-code"
+          class="input flex-1 text-sm sm:text-lg py-2 sm:py-3"
+          placeholder="请输入基金代码或基金名称"
+        >
+        <button class="btn btn-primary whitespace-nowrap py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base" onclick="homeQueryFund()">
+          <i class="fa fa-search mr-1 sm:mr-2"></i>查询
+        </button>
+      </div>
+      <p class="text-xs text-gray-500 mt-1 sm:mt-2">支持6位数字基金代码或基金名称查询，如：000001 或 华夏成长混合</p>
+    </div>
 
       <!-- 热门基金滚动展示 -->
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4">
+      <div id="hot-funds-section" class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4">
         <div class="flex justify-between items-center mb-3 sm:mb-4">
           <h2 class="text-base sm:text-lg font-semibold">热门基金</h2>
           <span class="text-xs text-gray-500" id="hot-funds-update-time">最近更新：刚刚</span>
@@ -319,7 +353,7 @@
       </div>
 
       <!-- 市场概览和热门基金 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div id="market-overview-section" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <!-- 市场概览 -->
         <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-primary">
           <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">市场概览</h2>
@@ -384,7 +418,7 @@
         </div>
 
         <!-- 热门基金推荐 -->
-        <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-secondary">
+        <div id="recommended-funds-section" class="bg-white rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-secondary">
           <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">热门基金</h2>
           <div class="space-y-3 sm:space-y-4">
             <div class="flex justify-between items-center p-2 sm:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" onclick="quickQueryFund('000001')">
@@ -420,7 +454,7 @@
       </div>
 
       <!-- 最新新闻摘要 -->
-      <div class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4 border-l-4 border-info">
+      <div id="news-section" class="bg-white rounded-lg shadow-sm p-4 sm:p-5 mb-4 border-l-4 border-info">
         <h2 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4">最新资讯</h2>
         <div class="space-y-3 sm:space-y-4">
           <a href="https://www.baidu.com/s?wd=央行降准0.5个百分点，释放长期资金约1.2万亿元" target="_blank" class="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-gray-50 rounded-lg hover:shadow-sm transition-shadow cursor-pointer">
@@ -880,6 +914,273 @@
       </div>
     </div>
 
+    <!-- 定投计算器面板 -->
+    <div id="panel-calculator" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">定投计算器</h2>
+          <button class="btn btn-secondary" onclick="resetCalculator()">
+            <i class="fa fa-refresh mr-1"></i> 重置
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- 输入参数 -->
+          <div class="space-y-4">
+            <div>
+              <label for="monthly-investment" class="block text-sm font-medium text-gray-700 mb-1">每月定投金额 (元)</label>
+              <input type="number" id="monthly-investment" class="input w-full" placeholder="请输入每月定投金额" value="1000" min="100">
+            </div>
+            
+            <div>
+              <label for="investment-years" class="block text-sm font-medium text-gray-700 mb-1">定投年限 (年)</label>
+              <input type="number" id="investment-years" class="input w-full" placeholder="请输入定投年限" value="5" min="1" max="30">
+            </div>
+            
+            <div>
+              <label for="expected-return-rate" class="block text-sm font-medium text-gray-700 mb-1">预期年化收益率 (%)</label>
+              <input type="number" id="expected-return-rate" class="input w-full" placeholder="请输入预期年化收益率" value="8" min="0" max="50" step="0.1">
+            </div>
+            
+            <div>
+              <label for="investment-start-date" class="block text-sm font-medium text-gray-700 mb-1">开始日期</label>
+              <input type="date" id="investment-start-date" class="input w-full" value="2024-01-01">
+            </div>
+            
+            <button class="btn btn-primary w-full mt-2" onclick="calculateInvestment()">
+              <i class="fa fa-calculator mr-1"></i> 开始计算
+            </button>
+          </div>
+          
+          <!-- 计算结果 -->
+          <div class="space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="text-sm font-medium text-gray-700 mb-2">计算结果</h3>
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">总投入金额:</span>
+                  <span class="text-sm font-medium" id="total-investment">¥0</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">预期收益:</span>
+                  <span class="text-sm font-medium text-up" id="expected-profit">¥0</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">到期总资产:</span>
+                  <span class="text-sm font-medium" id="total-asset">¥0</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-sm text-gray-600">收益倍数:</span>
+                  <span class="text-sm font-medium" id="profit-multiple">0</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 收益走势图表 -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="text-sm font-medium text-gray-700 mb-2">收益走势</h3>
+              <div id="investment-chart" class="w-full h-48"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 基金筛选器面板 -->
+    <div id="panel-filter" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">基金筛选器</h2>
+          <button class="btn btn-secondary" onclick="resetFilter()">
+            <i class="fa fa-refresh mr-1"></i> 重置筛选
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- 筛选条件 -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">基金类型</label>
+              <select id="filter-fund-type" class="input w-full">
+                <option value="all">全部类型</option>
+                <option value="stock">股票型</option>
+                <option value="mixed">混合型</option>
+                <option value="bond">债券型</option>
+                <option value="money">货币型</option>
+                <option value="index">指数型</option>
+                <option value="qdii">QDII</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">风险等级</label>
+              <select id="filter-risk-level" class="input w-full">
+                <option value="all">全部等级</option>
+                <option value="low">低风险</option>
+                <option value="medium">中风险</option>
+                <option value="high">高风险</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">近1年收益率</label>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-gray-500">-50%</span>
+                  <span class="text-xs text-gray-500">50%</span>
+                </div>
+                <input type="range" id="filter-return-rate" class="w-full" min="-50" max="50" value="-50">
+                <div class="text-right">
+                  <span class="text-xs text-gray-500">最低: <span id="filter-return-rate-value">-50</span>%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">基金规模 (亿元)</label>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-gray-500">0</span>
+                  <span class="text-xs text-gray-500">1000</span>
+                </div>
+                <input type="range" id="filter-fund-size" class="w-full" min="0" max="1000" value="0">
+                <div class="text-right">
+                  <span class="text-xs text-gray-500">最低: <span id="filter-fund-size-value">0</span>亿元</span>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">成立时间</label>
+              <select id="filter-establish-time" class="input w-full">
+                <option value="all">全部时间</option>
+                <option value="1">1年以内</option>
+                <option value="3">3年以内</option>
+                <option value="5">5年以内</option>
+                <option value="10">10年以内</option>
+                <option value="10+">10年以上</option>
+              </select>
+            </div>
+            
+            <button class="btn btn-primary w-full" onclick="filterFunds()">
+              <i class="fa fa-search mr-1"></i> 开始筛选
+            </button>
+          </div>
+          
+          <!-- 筛选结果 -->
+          <div class="md:col-span-2">
+            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+              <div class="flex justify-between items-center">
+                <h3 class="text-sm font-medium text-gray-700">筛选结果</h3>
+                <span class="text-xs text-gray-500" id="filter-result-count">共 0 只基金</span>
+              </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-gray-200">
+                      <th class="py-2 text-left">基金名称</th>
+                      <th class="py-2 text-left">代码</th>
+                      <th class="py-2 text-left">类型</th>
+                      <th class="py-2 text-left">近1年收益率</th>
+                      <th class="py-2 text-left">规模(亿元)</th>
+                      <th class="py-2 text-left">成立时间</th>
+                      <th class="py-2 text-left">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="filter-result-body">
+                    <!-- 筛选结果将通过JavaScript动态添加 -->
+                    <tr>
+                      <td colspan="7" class="py-8 text-center text-gray-500">
+                        <i class="fa fa-filter text-xl mb-2"></i>
+                        <p>请设置筛选条件并点击"开始筛选"按钮</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 持仓分析面板 -->
+    <div id="panel-analysis" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">持仓分析</h2>
+          <button class="btn btn-primary" onclick="refreshAnalysis()">
+            <i class="fa fa-refresh mr-1"></i> 刷新分析
+          </button>
+        </div>
+        
+        <!-- 分析摘要 -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="bg-gray-50 p-4 rounded-lg text-center">
+            <p class="text-xs text-gray-500">持仓基金数</p>
+            <p class="text-lg font-medium" id="fund-count">0</p>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg text-center">
+            <p class="text-xs text-gray-500">总持仓市值</p>
+            <p class="text-lg font-medium" id="total-market-value">¥0</p>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg text-center">
+            <p class="text-xs text-gray-500">整体收益</p>
+            <p class="text-lg font-medium text-up" id="overall-profit">¥0</p>
+          </div>
+          <div class="bg-gray-50 p-4 rounded-lg text-center">
+            <p class="text-xs text-gray-500">风险等级</p>
+            <p class="text-lg font-medium" id="risk-level">低</p>
+          </div>
+        </div>
+        
+        <!-- 行业分布 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">行业分布</h3>
+            <div id="industry-chart" class="w-full h-64"></div>
+          </div>
+          
+          <!-- 风险等级分布 -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">风险等级分布</h3>
+            <div id="risk-chart" class="w-full h-64"></div>
+          </div>
+        </div>
+        
+        <!-- 持仓明细 -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="text-sm font-medium text-gray-700 mb-2">持仓明细</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="py-2 text-left">基金名称</th>
+                  <th class="py-2 text-left">代码</th>
+                  <th class="py-2 text-left">持仓占比</th>
+                  <th class="py-2 text-left">行业</th>
+                  <th class="py-2 text-left">风险等级</th>
+                  <th class="py-2 text-left">日涨幅</th>
+                </tr>
+              </thead>
+              <tbody id="analysis-table-body">
+                <!-- 持仓明细将通过JavaScript动态添加 -->
+                <tr>
+                  <td colspan="6" class="py-8 text-center text-gray-500">
+                    <i class="fa fa-info-circle text-xl mb-2"></i>
+                    <p>暂无持仓数据，请先添加基金到持仓</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 登录面板 -->
     <div id="panel-auth" class="hidden fade-enter">
       <div class="max-w-md mx-auto bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -951,6 +1252,140 @@
           <button class="btn btn-primary w-full" onclick="registerUser()">
             注册
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 市场热点面板 -->
+    <div id="panel-hot" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">市场热点追踪</h2>
+          <button class="btn btn-primary" onclick="refreshHotTopics()">
+            <i class="fa fa-refresh mr-1"></i> 刷新热点
+          </button>
+        </div>
+        
+        <!-- 热点板块分析 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- 热点板块排名 -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-sm font-medium text-gray-700 mb-4">热点板块排名</h3>
+            <div class="space-y-3">
+              <div id="hot-sectors-list" class="space-y-2">
+                <!-- 热点板块数据将通过JavaScript动态添加 -->
+                <div class="text-center py-8 text-gray-500">
+                  <i class="fa fa-fire text-xl mb-2"></i>
+                  <p>点击刷新按钮获取热点板块数据</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 热点板块走势图 -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-sm font-medium text-gray-700 mb-4">热点板块走势</h3>
+            <div id="hot-sectors-chart" class="w-full h-64"></div>
+          </div>
+        </div>
+        
+        <!-- 热点相关基金 -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-sm font-medium text-gray-700">热点相关基金</h3>
+            <span class="text-xs text-gray-500" id="hot-funds-count">共 0 只基金</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="py-2 text-left">基金名称</th>
+                  <th class="py-2 text-left">代码</th>
+                  <th class="py-2 text-left">关联板块</th>
+                  <th class="py-2 text-left">日涨跌幅</th>
+                  <th class="py-2 text-left">近1周</th>
+                  <th class="py-2 text-left">近1月</th>
+                  <th class="py-2 text-left">操作</th>
+                </tr>
+              </thead>
+              <tbody id="hot-funds-body">
+                <!-- 热点基金数据将通过JavaScript动态添加 -->
+                <tr>
+                  <td colspan="7" class="py-8 text-center text-gray-500">
+                    <i class="fa fa-line-chart text-xl mb-2"></i>
+                    <p>点击刷新按钮获取热点相关基金数据</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 个性化推荐面板 -->
+    <div id="panel-recommend" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">个性化推荐</h2>
+          <button class="btn btn-primary" onclick="refreshRecommendations()">
+            <i class="fa fa-refresh mr-1"></i> 刷新推荐
+          </button>
+        </div>
+        
+        <!-- 推荐原因分析 -->
+        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+          <h3 class="text-sm font-medium text-gray-700 mb-3">推荐分析</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-3 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <div class="w-8 h-8 flex items-center justify-center bg-primary/10 text-primary rounded-full mr-3">
+                  <i class="fa fa-history"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium">浏览历史</p>
+                  <p class="text-xs text-gray-500">基于您查看的基金</p>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <div class="w-8 h-8 flex items-center justify-center bg-primary/10 text-primary rounded-full mr-3">
+                  <i class="fa fa-star"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium">关注列表</p>
+                  <p class="text-xs text-gray-500">基于您关注的基金</p>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm">
+              <div class="flex items-center">
+                <div class="w-8 h-8 flex items-center justify-center bg-primary/10 text-primary rounded-full mr-3">
+                  <i class="fa fa-briefcase"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium">持仓分析</p>
+                  <p class="text-xs text-gray-500">基于您的持仓结构</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 推荐基金列表 -->
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-sm font-medium text-gray-700">为您推荐的基金</h3>
+            <span class="text-xs text-gray-500" id="recommend-count">共 0 只基金</span>
+          </div>
+          <div id="recommend-list" class="space-y-4">
+            <!-- 推荐基金数据将通过JavaScript动态添加 -->
+            <div class="text-center py-8 text-gray-500">
+              <i class="fa fa-thumbs-up text-xl mb-2"></i>
+              <p>点击刷新按钮获取个性化推荐</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1168,6 +1603,9 @@
       
       // 启动热门基金滚动
       startHotFundsScroll();
+      
+      // 初始化首页设置
+      initHomeSettings();
     });
 
     // 切换选项卡
@@ -3268,11 +3706,86 @@
         navigator.serviceWorker.register('/service-worker.js')
           .then(function(registration) {
             console.log('Service Worker 注册成功:', registration.scope);
+            
+            // 注册后台同步
+            if ('sync' in registration) {
+              console.log('后台同步功能可用');
+              // 注册同步任务
+              registration.sync.register('sync-fund-data')
+                .then(() => console.log('后台同步任务已注册'))
+                .catch(error => console.error('注册后台同步任务失败:', error));
+            }
+            
+            // 检查推送通知权限
+            if ('Notification' in window) {
+              Notification.requestPermission().then(permission => {
+                console.log('推送通知权限:', permission);
+              });
+            }
+            
+            // 监听控制状态变化
+            navigator.serviceWorker.addEventListener('controllerchange', function() {
+              console.log('Service Worker 控制状态变化');
+            });
           })
           .catch(function(error) {
             console.log('Service Worker 注册失败:', error);
           });
       });
+    }
+    
+    // 手动触发后台同步
+    function triggerSync() {
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.sync.register('sync-fund-data')
+            .then(() => showToast('后台同步已触发'))
+            .catch(error => {
+              console.error('触发后台同步失败:', error);
+              showToast('触发后台同步失败');
+            });
+        });
+      } else {
+        showToast('浏览器不支持后台同步功能');
+      }
+    }
+    
+    // 订阅推送通知
+    function subscribeToPush() {
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U')
+          })
+          .then(subscription => {
+            console.log('推送通知订阅成功:', subscription);
+            showToast('推送通知订阅成功');
+          })
+          .catch(error => {
+            console.error('推送通知订阅失败:', error);
+            showToast('推送通知订阅失败');
+          });
+        });
+      } else {
+        showToast('浏览器不支持推送通知功能');
+      }
+    }
+    
+    // 辅助函数：将base64字符串转换为Uint8Array
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+      
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
     }
 
     // 切换认证模式
@@ -3495,6 +4008,655 @@
       renderWatchlist();
       showToast('基金已从关注列表中删除');
     }
+
+    // 定投计算器相关函数
+    function calculateInvestment() {
+      // 获取输入参数
+      const monthlyInvestment = parseFloat(document.getElementById('monthly-investment').value) || 0;
+      const investmentYears = parseInt(document.getElementById('investment-years').value) || 0;
+      const expectedReturnRate = parseFloat(document.getElementById('expected-return-rate').value) || 0;
+      
+      // 计算总期数（月数）
+      const totalMonths = investmentYears * 12;
+      
+      // 计算月收益率
+      const monthlyReturnRate = expectedReturnRate / 100 / 12;
+      
+      // 计算到期总资产（使用定投公式）
+      // 公式：A = P * ((1 + r) * ((1 + r)^n - 1)) / r
+      // 其中：A = 到期总资产，P = 每月定投金额，r = 月收益率，n = 总期数
+      let totalAsset = 0;
+      if (monthlyReturnRate > 0) {
+        totalAsset = monthlyInvestment * ((1 + monthlyReturnRate) * (Math.pow(1 + monthlyReturnRate, totalMonths) - 1)) / monthlyReturnRate;
+      } else {
+        totalAsset = monthlyInvestment * totalMonths;
+      }
+      
+      // 计算总投入金额
+      const totalInvestment = monthlyInvestment * totalMonths;
+      
+      // 计算预期收益
+      const expectedProfit = totalAsset - totalInvestment;
+      
+      // 计算收益倍数
+      const profitMultiple = totalInvestment > 0 ? (totalAsset / totalInvestment).toFixed(2) : 0;
+      
+      // 更新结果显示
+      document.getElementById('total-investment').textContent = `¥${totalInvestment.toFixed(2)}`;
+      document.getElementById('expected-profit').textContent = `¥${expectedProfit.toFixed(2)}`;
+      document.getElementById('total-asset').textContent = `¥${totalAsset.toFixed(2)}`;
+      document.getElementById('profit-multiple').textContent = profitMultiple;
+      
+      // 生成收益走势数据
+      generateInvestmentChart(monthlyInvestment, totalMonths, monthlyReturnRate);
+    }
+
+    function generateInvestmentChart(monthlyInvestment, totalMonths, monthlyReturnRate) {
+      // 生成年份标签
+      const labels = [];
+      const totalInvestmentData = [];
+      const totalAssetData = [];
+      
+      let cumulativeInvestment = 0;
+      let cumulativeAsset = 0;
+      
+      for (let i = 0; i <= totalMonths; i++) {
+        // 每12个月添加一个标签
+        if (i % 12 === 0) {
+          labels.push(`${Math.floor(i / 12)}年`);
+        } else {
+          labels.push('');
+        }
+        
+        // 计算累计投入
+        cumulativeInvestment = monthlyInvestment * i;
+        
+        // 计算累计资产
+        if (monthlyReturnRate > 0) {
+          cumulativeAsset = monthlyInvestment * ((1 + monthlyReturnRate) * (Math.pow(1 + monthlyReturnRate, i) - 1)) / monthlyReturnRate;
+        } else {
+          cumulativeAsset = cumulativeInvestment;
+        }
+        
+        totalInvestmentData.push(cumulativeInvestment);
+        totalAssetData.push(cumulativeAsset);
+      }
+      
+      // 初始化图表
+      const chartDom = document.getElementById('investment-chart');
+      const myChart = echarts.init(chartDom);
+      
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          formatter: function(params) {
+            let result = params[0].name + '<br/>';
+            params.forEach(param => {
+              result += param.marker + param.seriesName + ': ¥' + param.value.toFixed(2) + '<br/>';
+            });
+            return result;
+          }
+        },
+        legend: {
+          data: ['累计投入', '总资产'],
+          top: 0
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: labels
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: '¥{value}'
+          }
+        },
+        series: [
+          {
+            name: '累计投入',
+            type: 'line',
+            data: totalInvestmentData,
+            smooth: true,
+            lineStyle: {
+              color: '#64748b',
+              width: 2
+            }
+          },
+          {
+            name: '总资产',
+            type: 'line',
+            data: totalAssetData,
+            smooth: true,
+            lineStyle: {
+              color: '#3b82f6',
+              width: 2
+            },
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: 'rgba(59, 130, 246, 0.3)'
+                },
+                {
+                  offset: 1,
+                  color: 'rgba(59, 130, 246, 0.1)'
+                }
+              ])
+            }
+          }
+        ]
+      };
+      
+      myChart.setOption(option);
+      
+      // 响应式调整
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      });
+    }
+
+    function resetCalculator() {
+      // 重置输入参数
+      document.getElementById('monthly-investment').value = '1000';
+      document.getElementById('investment-years').value = '5';
+      document.getElementById('expected-return-rate').value = '8';
+      document.getElementById('investment-start-date').value = '2024-01-01';
+      
+      // 重置结果显示
+      document.getElementById('total-investment').textContent = '¥0';
+      document.getElementById('expected-profit').textContent = '¥0';
+      document.getElementById('total-asset').textContent = '¥0';
+      document.getElementById('profit-multiple').textContent = '0';
+      
+      // 重置图表
+      const chartDom = document.getElementById('investment-chart');
+      const myChart = echarts.init(chartDom);
+      myChart.setOption({
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['累计投入', '总资产'],
+          top: 0
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: []
+        },
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: '¥{value}'
+          }
+        },
+        series: [
+          {
+            name: '累计投入',
+            type: 'line',
+            data: []
+          },
+          {
+            name: '总资产',
+            type: 'line',
+            data: []
+          }
+        ]
+      });
+    }
+
+    // 持仓分析相关函数
+    function refreshAnalysis() {
+      // 获取持仓数据
+      const positionList = JSON.parse(localStorage.getItem('positionList')) || [];
+      
+      // 计算分析数据
+      calculateAnalysis(positionList);
+      
+      // 生成行业分布图表
+      generateIndustryChart(positionList);
+      
+      // 生成风险等级分布图表
+      generateRiskChart(positionList);
+      
+      // 渲染持仓明细
+      renderAnalysisTable(positionList);
+      
+      showToast('持仓分析已更新');
+    }
+
+    function calculateAnalysis(positionList) {
+      // 计算持仓基金数
+      const fundCount = positionList.length;
+      
+      // 计算总持仓市值和整体收益
+      let totalMarketValue = 0;
+      let totalCost = 0;
+      
+      positionList.forEach(position => {
+        if (position) {
+          const shares = position.shares || 0;
+          const estimate = position.estimate || position.cost || 0;
+          const cost = position.cost || 0;
+          
+          totalMarketValue += shares * estimate;
+          totalCost += shares * cost;
+        }
+      });
+      
+      const overallProfit = totalMarketValue - totalCost;
+      
+      // 计算风险等级
+      const riskLevel = calculateRiskLevel(positionList);
+      
+      // 更新分析摘要
+      document.getElementById('fund-count').textContent = fundCount;
+      document.getElementById('total-market-value').textContent = `¥${totalMarketValue.toFixed(2)}`;
+      document.getElementById('overall-profit').textContent = `¥${overallProfit.toFixed(2)}`;
+      document.getElementById('risk-level').textContent = riskLevel;
+    }
+
+    function calculateRiskLevel(positionList) {
+      // 模拟风险等级计算
+      // 实际项目中，应该根据基金的风险等级和持仓占比来计算
+      if (positionList.length === 0) {
+        return '低';
+      }
+      
+      // 简单模拟：根据持仓基金数和平均涨跌幅来判断风险等级
+      const avgDayChange = positionList.reduce((sum, position) => {
+        return sum + (Math.abs(position.dayChange || 0));
+      }, 0) / positionList.length;
+      
+      if (avgDayChange > 3) {
+        return '高';
+      } else if (avgDayChange > 1) {
+        return '中';
+      } else {
+        return '低';
+      }
+    }
+
+    function generateIndustryChart(positionList) {
+      // 模拟行业分布数据
+      const industryData = {
+        '科技': 0,
+        '金融': 0,
+        '消费': 0,
+        '医药': 0,
+        '新能源': 0,
+        '其他': 0
+      };
+      
+      // 根据基金名称分配行业
+      positionList.forEach(position => {
+        if (position && position.name) {
+          const name = position.name;
+          const shares = position.shares || 0;
+          const estimate = position.estimate || position.cost || 0;
+          const value = shares * estimate;
+          
+          if (name.includes('科技') || name.includes('半导体') || name.includes('互联网')) {
+            industryData['科技'] += value;
+          } else if (name.includes('金融') || name.includes('银行') || name.includes('证券')) {
+            industryData['金融'] += value;
+          } else if (name.includes('消费') || name.includes('白酒') || name.includes('食品')) {
+            industryData['消费'] += value;
+          } else if (name.includes('医药') || name.includes('医疗') || name.includes('健康')) {
+            industryData['医药'] += value;
+          } else if (name.includes('新能源') || name.includes('光伏') || name.includes('电动车')) {
+            industryData['新能源'] += value;
+          } else {
+            industryData['其他'] += value;
+          }
+        }
+      });
+      
+      // 转换为ECharts格式
+      const seriesData = Object.entries(industryData)
+        .filter(([_, value]) => value > 0)
+        .map(([name, value]) => ({
+          name,
+          value
+        }));
+      
+      // 生成图表
+      const chartDom = document.getElementById('industry-chart');
+      const myChart = echarts.init(chartDom);
+      
+      const option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 10,
+          data: Object.keys(industryData).filter(key => industryData[key] > 0)
+        },
+        series: [
+          {
+            name: '行业分布',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '18',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: seriesData
+          }
+        ]
+      };
+      
+      myChart.setOption(option);
+      
+      // 响应式调整
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      });
+    }
+
+    function generateRiskChart(positionList) {
+      // 模拟风险等级分布数据
+      const riskData = {
+        '低': 0,
+        '中': 0,
+        '高': 0
+      };
+      
+      // 根据基金名称和涨跌幅分配风险等级
+      positionList.forEach(position => {
+        if (position) {
+          const shares = position.shares || 0;
+          const estimate = position.estimate || position.cost || 0;
+          const value = shares * estimate;
+          const dayChange = Math.abs(position.dayChange || 0);
+          
+          if (dayChange < 1) {
+            riskData['低'] += value;
+          } else if (dayChange < 3) {
+            riskData['中'] += value;
+          } else {
+            riskData['高'] += value;
+          }
+        }
+      });
+      
+      // 转换为ECharts格式
+      const seriesData = Object.entries(riskData)
+        .filter(([_, value]) => value > 0)
+        .map(([name, value]) => ({
+          name,
+          value
+        }));
+      
+      // 生成图表
+      const chartDom = document.getElementById('risk-chart');
+      const myChart = echarts.init(chartDom);
+      
+      const option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 10,
+          data: Object.keys(riskData).filter(key => riskData[key] > 0)
+        },
+        series: [
+          {
+            name: '风险等级',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            itemStyle: {
+              borderRadius: 10,
+              borderColor: '#fff',
+              borderWidth: 2
+            },
+            label: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '18',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: seriesData
+          }
+        ]
+      };
+      
+      myChart.setOption(option);
+      
+      // 响应式调整
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      });
+    }
+
+    function renderAnalysisTable(positionList) {
+      const tableBody = document.getElementById('analysis-table-body');
+      
+      // 清空表格
+      tableBody.innerHTML = '';
+      
+      // 计算总市值
+      const totalMarketValue = positionList.reduce((sum, position) => {
+        if (position) {
+          const shares = position.shares || 0;
+          const estimate = position.estimate || position.cost || 0;
+          return sum + shares * estimate;
+        }
+        return sum;
+      }, 0);
+      
+      // 显示空状态
+      if (positionList.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `
+          <td colspan="6" class="py-8 text-center text-gray-500">
+            <i class="fa fa-info-circle text-xl mb-2"></i>
+            <p>暂无持仓数据，请先添加基金到持仓</p>
+          </td>
+        `;
+        tableBody.appendChild(emptyRow);
+        return;
+      }
+      
+      // 渲染持仓明细
+      positionList.forEach(position => {
+        if (position) {
+          const shares = position.shares || 0;
+          const estimate = position.estimate || position.cost || 0;
+          const cost = position.cost || 0;
+          const dayChange = position.dayChange || 0;
+          
+          // 计算持仓占比
+          const positionValue = shares * estimate;
+          const positionPercentage = totalMarketValue > 0 ? (positionValue / totalMarketValue * 100).toFixed(2) : '0.00';
+          
+          // 确定行业
+          const industry = determineIndustry(position.name || '');
+          
+          // 确定风险等级
+          const riskLevel = determineRiskLevel(dayChange);
+          
+          // 设置涨跌颜色
+          let dayChangeClass = 'text-flat';
+          if (dayChange > 0) dayChangeClass = 'text-up';
+          else if (dayChange < 0) dayChangeClass = 'text-down';
+          
+          const row = document.createElement('tr');
+          row.className = 'card-hover';
+          row.innerHTML = `
+            <td class="py-2">${position.name || `基金${position.code || '未知'}`}</td>
+            <td class="py-2">${position.code || '-'}</td>
+            <td class="py-2">${positionPercentage}%</td>
+            <td class="py-2">${industry}</td>
+            <td class="py-2">${riskLevel}</td>
+            <td class="py-2 ${dayChangeClass}">${dayChange.toFixed(2)}%</td>
+          `;
+          
+          tableBody.appendChild(row);
+        }
+      });
+    }
+
+    function determineIndustry(fundName) {
+      // 根据基金名称判断行业
+      if (fundName.includes('科技') || fundName.includes('半导体') || fundName.includes('互联网')) {
+        return '科技';
+      } else if (fundName.includes('金融') || fundName.includes('银行') || fundName.includes('证券')) {
+        return '金融';
+      } else if (fundName.includes('消费') || fundName.includes('白酒') || fundName.includes('食品')) {
+        return '消费';
+      } else if (fundName.includes('医药') || fundName.includes('医疗') || fundName.includes('健康')) {
+        return '医药';
+      } else if (fundName.includes('新能源') || fundName.includes('光伏') || fundName.includes('电动车')) {
+        return '新能源';
+      } else {
+        return '其他';
+      }
+    }
+
+    function determineRiskLevel(dayChange) {
+      // 根据日涨跌幅判断风险等级
+      const absChange = Math.abs(dayChange);
+      if (absChange < 1) {
+        return '低';
+      } else if (absChange < 3) {
+        return '中';
+      } else {
+        return '高';
+      }
+    }
+
+    // 自定义首页相关函数
+    function showCustomizeModal() {
+      // 获取当前设置
+      const homeSettings = getHomeSettings();
+      
+      // 更新设置表单
+      document.getElementById('customize-show-hot-funds').checked = homeSettings.showHotFunds;
+      document.getElementById('customize-show-market-overview').checked = homeSettings.showMarketOverview;
+      document.getElementById('customize-show-news').checked = homeSettings.showNews;
+      document.getElementById('customize-show-recommended-funds').checked = homeSettings.showRecommendedFunds;
+      
+      // 显示模态框
+      document.getElementById('customize-modal').classList.remove('hidden');
+    }
+
+    function closeCustomizeModal() {
+      document.getElementById('customize-modal').classList.add('hidden');
+    }
+
+    function saveHomeSettings() {
+      // 获取设置值
+      const homeSettings = {
+        showHotFunds: document.getElementById('customize-show-hot-funds').checked,
+        showMarketOverview: document.getElementById('customize-show-market-overview').checked,
+        showNews: document.getElementById('customize-show-news').checked,
+        showRecommendedFunds: document.getElementById('customize-show-recommended-funds').checked
+      };
+      
+      // 保存设置
+      localStorage.setItem('homeSettings', JSON.stringify(homeSettings));
+      
+      // 应用设置
+      applyHomeSettings(homeSettings);
+      
+      // 关闭模态框
+      closeCustomizeModal();
+      
+      showToast('首页设置已保存');
+    }
+
+    function getHomeSettings() {
+      // 从本地存储获取设置，如果不存在则返回默认设置
+      const defaultSettings = {
+        showHotFunds: true,
+        showMarketOverview: true,
+        showNews: true,
+        showRecommendedFunds: true
+      };
+      
+      try {
+        const savedSettings = JSON.parse(localStorage.getItem('homeSettings'));
+        return { ...defaultSettings, ...savedSettings };
+      } catch (error) {
+        return defaultSettings;
+      }
+    }
+
+    function applyHomeSettings(settings) {
+      // 应用首页设置
+      if (settings.showHotFunds) {
+        document.getElementById('hot-funds-section').classList.remove('hidden');
+      } else {
+        document.getElementById('hot-funds-section').classList.add('hidden');
+      }
+      
+      if (settings.showMarketOverview) {
+        document.getElementById('market-overview-section').classList.remove('hidden');
+      } else {
+        document.getElementById('market-overview-section').classList.add('hidden');
+      }
+      
+      if (settings.showNews) {
+        document.getElementById('news-section').classList.remove('hidden');
+      } else {
+        document.getElementById('news-section').classList.add('hidden');
+      }
+      
+      if (settings.showRecommendedFunds) {
+        document.getElementById('recommended-funds-section').classList.remove('hidden');
+      } else {
+        document.getElementById('recommended-funds-section').classList.add('hidden');
+      }
+    }
+
+    // 初始化首页设置
+    function initHomeSettings() {
+      const homeSettings = getHomeSettings();
+      applyHomeSettings(homeSettings);
+    }
   </script>
 
   <!-- 添加到关注列表弹窗 -->
@@ -3521,5 +4683,139 @@
       </div>
     </div>
   </div>
-</body>
+
+  <!-- 自定义首页弹窗 -->
+  <div id="customize-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all duration-300">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium">自定义首页</h3>
+      </div>
+      <div class="px-6 py-4">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <label for="customize-show-hot-funds" class="text-sm font-medium text-gray-700">显示热门基金</label>
+            <input type="checkbox" id="customize-show-hot-funds" class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+          </div>
+          <div class="flex items-center justify-between">
+            <label for="customize-show-market-overview" class="text-sm font-medium text-gray-700">显示市场概览</label>
+            <input type="checkbox" id="customize-show-market-overview" class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+          </div>
+          <div class="flex items-center justify-between">
+            <label for="customize-show-news" class="text-sm font-medium text-gray-700">显示最新资讯</label>
+            <input type="checkbox" id="customize-show-news" class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+          </div>
+          <div class="flex items-center justify-between">
+            <label for="customize-show-recommended-funds" class="text-sm font-medium text-gray-700">显示基金推荐</label>
+            <input type="checkbox" id="customize-show-recommended-funds" class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+          </div>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+        <button class="btn btn-secondary" onclick="closeCustomizeModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveHomeSettings()">保存</button>
+      </div>
+    </div>
+  </div>
+<!-- 投资组合分享面板 -->
+    <div id="panel-share" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">投资组合分享</h2>
+          <button class="btn btn-primary" onclick="generateShareablePortfolio()">
+            <i class="fa fa-magic mr-1"></i> 生成分享链接
+          </button>
+        </div>
+        
+        <!-- 投资组合预览 -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+          <h3 class="text-md font-medium mb-3">投资组合预览</h3>
+          <div id="portfolio-preview" class="space-y-3">
+            <div class="text-center py-8 text-gray-500">
+              <i class="fa fa-briefcase text-2xl mb-2"></i>
+              <p>点击"生成分享链接"按钮创建可分享的投资组合</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 分享选项 -->
+        <div class="mb-6">
+          <h3 class="text-md font-medium mb-3">分享选项</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="share-title" class="block text-sm font-medium text-gray-700 mb-1">组合名称</label>
+              <input type="text" id="share-title" class="input w-full" placeholder="输入投资组合名称" value="我的投资组合">
+            </div>
+            <div>
+              <label for="share-description" class="block text-sm font-medium text-gray-700 mb-1">组合描述</label>
+              <input type="text" id="share-description" class="input w-full" placeholder="输入投资组合描述" value="我的精选基金组合">
+            </div>
+          </div>
+          <div class="mt-4">
+            <label for="share-visibility" class="block text-sm font-medium text-gray-700 mb-1">分享可见性</label>
+            <select id="share-visibility" class="input w-full">
+              <option value="public">公开分享</option>
+              <option value="private">私密分享</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 分享结果 -->
+        <div id="share-result" class="hidden bg-gray-50 rounded-lg p-4 mb-6">
+          <h3 class="text-md font-medium mb-3">分享链接</h3>
+          <div class="flex gap-3">
+            <input type="text" id="share-url" class="input flex-1" readonly>
+            <button class="btn btn-secondary whitespace-nowrap" onclick="copyShareUrl()">
+              <i class="fa fa-copy mr-1"></i> 复制链接
+            </button>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button class="btn btn-secondary text-sm" onclick="shareToWechat()">
+              <i class="fa fa-weixin mr-1"></i> 微信分享
+            </button>
+            <button class="btn btn-secondary text-sm" onclick="shareToWeibo()">
+              <i class="fa fa-weibo mr-1"></i> 微博分享
+            </button>
+            <button class="btn btn-secondary text-sm" onclick="downloadPortfolioImage()">
+              <i class="fa fa-download mr-1"></i> 下载组合图片
+            </button>
+          </div>
+        </div>
+        
+        <!-- 历史分享记录 -->
+        <div>
+          <h3 class="text-md font-medium mb-3">历史分享记录</h3>
+          <div id="share-history" class="space-y-3">
+            <div class="text-center py-6 text-gray-500">
+              <i class="fa fa-history text-2xl mb-2"></i>
+              <p>暂无分享记录</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 基金深度分析面板 -->
+    <div id="panel-deep-analysis" class="hidden fade-enter">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-semibold">基金深度分析</h2>
+          <div class="flex gap-3">
+            <input type="text" id="deep-analysis-fund-code" class="input w-48" placeholder="请输入基金代码">
+            <button class="btn btn-primary" onclick="analyzeFund()">
+              <i class="fa fa-search mr-1"></i> 开始分析
+            </button>
+          </div>
+        </div>
+        
+        <!-- 分析结果 -->
+        <div id="deep-analysis-result" class="space-y-6">
+          <div class="text-center py-12 text-gray-500">
+            <i class="fa fa-line-chart text-3xl mb-3"></i>
+            <p>请输入基金代码并点击"开始分析"按钮</p>
+            <p class="text-sm mt-2">系统将为您生成详细的基金分析报告</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

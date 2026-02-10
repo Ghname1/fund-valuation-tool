@@ -22,7 +22,7 @@ class UIService {
   // 切换选项卡
   switchTab(tab) {
     // 重置所有选项卡和面板
-    const tabs = ['home', 'query', 'position', 'ranking', 'news', 'compare'];
+    const tabs = ['home', 'query', 'position', 'ranking', 'news', 'compare', 'watchlist', 'calculator', 'analysis', 'filter', 'auth', 'hot', 'recommend', 'share', 'deep-analysis'];
     tabs.forEach(t => {
       const tabElement = document.getElementById(`tab-${t}`);
       const panelElement = document.getElementById(`panel-${t}`);
@@ -75,6 +75,55 @@ class UIService {
       console.log('切换到基金对比选项卡');
       this.renderCompareList();
       this.renderFundCompare();
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'watchlist') {
+      console.log('切换到关注列表面板');
+      // 渲染关注列表
+      renderWatchlist();
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'calculator') {
+      console.log('切换到定投计算器面板');
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'analysis') {
+      console.log('切换到持仓分析面板');
+      // 刷新分析数据
+      refreshAnalysis();
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'filter') {
+      console.log('切换到基金筛选器面板');
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'auth') {
+      console.log('切换到登录面板');
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'hot') {
+      console.log('切换到市场热点面板');
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'recommend') {
+      console.log('切换到个性化推荐面板');
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'share') {
+      console.log('切换到投资组合分享面板');
+      // 停止其他自动刷新
+      this.stopRankingAutoRefresh();
+      this.stopNewsAutoRefresh();
+    } else if (tab === 'deep-analysis') {
+      console.log('切换到基金深度分析面板');
       // 停止其他自动刷新
       this.stopRankingAutoRefresh();
       this.stopNewsAutoRefresh();
