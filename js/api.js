@@ -84,7 +84,7 @@ class ApiService {
             source: '新浪财经',
             time: this.getCurrentTime(),
             content: `新闻摘要：${title}...`,
-            image: `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(title)}&image_size=portrait_4_3`,
+            image: `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Financial%20news%20about%20China%20market&image_size=portrait_4_3`,
             link: link
           });
           count++;
@@ -114,7 +114,7 @@ class ApiService {
         source: '中国证券报',
         time: timestamp,
         content: '央行决定于近日下调金融机构存款准备金率0.5个百分点，此次降准预计将释放长期资金约1.2万亿元，有助于保持流动性合理充裕，降低社会融资成本，支持实体经济发展。',
-        image: `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Central%20Bank%20monetary%20policy%20news%20${randomNum}&image_size=portrait_4_3`,
+        image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Financial%20news%20about%20China%20market&image_size=portrait_4_3',
         link: 'https://www.baidu.com/s?wd=央行降准0.5个百分点，释放长期资金约1.2万亿元'
       },
       {
@@ -122,7 +122,7 @@ class ApiService {
         source: '上海证券报',
         time: timestamp,
         content: '今日，A股市场表现强势，三大指数集体上涨。截至收盘，上证指数涨1.23%，深证成指涨1.87%，创业板指涨2.15%，行业板块多数上涨，新能源、半导体等科技类板块表现尤为突出。',
-        image: `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Stock%20market%20rising%20trend%20${randomNum}&image_size=portrait_4_3`,
+        image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Stock%20market%20chart%20rising%20trend&image_size=portrait_4_3',
         link: 'https://www.baidu.com/s?wd=A股三大指数集体上涨，创业板指表现强势'
       },
       {
@@ -130,7 +130,7 @@ class ApiService {
         source: '证券时报',
         time: timestamp,
         content: '近期，新能源板块持续走强，多只新能源主题基金净值创新高。分析师表示，随着全球能源转型加速，新能源行业有望保持长期增长态势，相关基金值得关注。',
-        image: `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=New%20energy%20sector%20rising%20${randomNum}&image_size=portrait_4_3`,
+        image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=New%20energy%20industry%20growth&image_size=portrait_4_3',
         link: 'https://www.baidu.com/s?wd=新能源板块持续走强，多只基金净值创新高'
       }
     ];
