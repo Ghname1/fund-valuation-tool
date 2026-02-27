@@ -162,7 +162,7 @@ async function syncHotFunds() {
     // 获取热门基金数据
     for (const fundCode of FUND_CODES) {
       const apiUrl = `http://fundgz.1234567.com.cn/js/${fundCode}.js`;
-      const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
+      const proxyUrl = `https://api.codetabs.com/v1/proxy?url=${encodeURIComponent(apiUrl)}`;
       
       try {
         await fetchAndCacheData(new Request(proxyUrl));
