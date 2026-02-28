@@ -34,9 +34,9 @@ class ApiService {
   // 获取新闻数据
   async getNews() {
     try {
-      // 修复：使用正确的代理URL格式
+      // 使用配置中的代理URL
       const apiUrl = 'https://news.sina.com.cn/roll/news/finance/fund/';
-      const proxyUrl = `https://api.codetabs.com/v1/proxy?url=${encodeURIComponent(apiUrl)}`;
+      const proxyUrl = `${config.api.proxyUrl}${encodeURIComponent(apiUrl)}`;
       
       const response = await this.fetchWithTimeout(proxyUrl, config.timeout.api);
       const html = await response.text();

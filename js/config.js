@@ -3,14 +3,14 @@ const config = {
   // API配置
   api: {
     fundValuation: 'http://fundgz.1234567.com.cn/js/',
-    proxyUrl: 'https://api.codetabs.com/v1/proxy?quest='
+    proxyUrl: 'https://api.codetabs.com/v1/proxy?url='
   },
   
   // 缓存配置（毫秒）
   cache: {
     ranking: 5 * 60 * 1000, // 5分钟
     funds: 10 * 60 * 1000, // 10分钟
-    news: 30 * 60 * 1000 // 30分钟
+    news: 1 * 60 * 1000 // 1分钟
   },
   
   // 自动刷新配置（毫秒）
