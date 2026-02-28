@@ -2050,6 +2050,30 @@ function copyShareUrlToClipboard(url) {
     });
 }
 
+// 切换下拉菜单显示状态
+function toggleDropdown(dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (dropdown) {
+    // 关闭所有其他下拉菜单
+    document.querySelectorAll('[id$="-dropdown"]').forEach(el => {
+      if (el.id !== dropdownId) {
+        el.classList.add('hidden');
+      }
+    });
+    // 切换当前下拉菜单
+    dropdown.classList.toggle('hidden');
+  }
+}
+
+// 点击页面其他地方关闭下拉菜单
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('.relative')) {
+    document.querySelectorAll('[id$="-dropdown"]').forEach(el => {
+      el.classList.add('hidden');
+    });
+  }
+});
+
 function shareToWechat() {
   const shareUrl = document.getElementById('share-url').value;
   if (shareUrl) {

@@ -237,42 +237,60 @@
           <i class="fa fa-star mr-1 sm:mr-2"></i>
           <span class="hidden sm:inline">关注列表</span>
         </button>
-        <button id="tab-calculator" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('calculator')">
-          <i class="fa fa-calculator mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">定投计算器</span>
-        </button>
-        <button id="tab-ranking" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('ranking')">
-          <i class="fa fa-line-chart mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">涨跌榜</span>
-        </button>
-        <button id="tab-hot" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('hot')">
-          <i class="fa fa-fire mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">市场热点</span>
-        </button>
-        <button id="tab-news" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('news')">
-          <i class="fa fa-newspaper-o mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">新闻资讯</span>
-        </button>
-        <button id="tab-filter" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('filter')">
-          <i class="fa fa-filter mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">基金筛选</span>
-        </button>
-        <button id="tab-compare" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('compare')">
-          <i class="fa fa-balance-scale mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">基金对比</span>
-        </button>
-        <button id="tab-analysis" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('analysis')">
-          <i class="fa fa-pie-chart mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">持仓分析</span>
-        </button>
-        <button id="tab-recommend" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('recommend')">
-          <i class="fa fa-thumbs-up mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">个性化推荐</span>
-        </button>
-        <button id="tab-deep-analysis" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('deep-analysis')">
-          <i class="fa fa-bar-chart mr-1 sm:mr-2"></i>
-          <span class="hidden sm:inline">基金深度分析</span>
-        </button>
+        <div class="relative">
+          <button class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300 flex items-center" onclick="toggleDropdown('market-dropdown')">
+            <i class="fa fa-line-chart mr-1 sm:mr-2"></i>
+            <span class="hidden sm:inline">市场动态</span>
+            <i class="fa fa-caret-down ml-1 text-xs"></i>
+          </button>
+          <div id="market-dropdown" class="hidden absolute top-full left-0 bg-white shadow-lg rounded-md z-50 w-48">
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('ranking'); toggleDropdown('market-dropdown')">
+              <i class="fa fa-line-chart mr-2"></i>涨跌榜
+            </button>
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('hot'); toggleDropdown('market-dropdown')">
+              <i class="fa fa-fire mr-2"></i>市场热点
+            </button>
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('news'); toggleDropdown('market-dropdown')">
+              <i class="fa fa-newspaper-o mr-2"></i>新闻资讯
+            </button>
+          </div>
+        </div>
+        <div class="relative">
+          <button class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300 flex items-center" onclick="toggleDropdown('tools-dropdown')">
+            <i class="fa fa-wrench mr-1 sm:mr-2"></i>
+            <span class="hidden sm:inline">投资工具</span>
+            <i class="fa fa-caret-down ml-1 text-xs"></i>
+          </button>
+          <div id="tools-dropdown" class="hidden absolute top-full left-0 bg-white shadow-lg rounded-md z-50 w-48">
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('calculator'); toggleDropdown('tools-dropdown')">
+              <i class="fa fa-calculator mr-2"></i>定投计算器
+            </button>
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('filter'); toggleDropdown('tools-dropdown')">
+              <i class="fa fa-filter mr-2"></i>基金筛选
+            </button>
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('compare'); toggleDropdown('tools-dropdown')">
+              <i class="fa fa-balance-scale mr-2"></i>基金对比
+            </button>
+          </div>
+        </div>
+        <div class="relative">
+          <button class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300 flex items-center" onclick="toggleDropdown('analysis-dropdown')">
+            <i class="fa fa-bar-chart mr-1 sm:mr-2"></i>
+            <span class="hidden sm:inline">投资分析</span>
+            <i class="fa fa-caret-down ml-1 text-xs"></i>
+          </button>
+          <div id="analysis-dropdown" class="hidden absolute top-full left-0 bg-white shadow-lg rounded-md z-50 w-48">
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('analysis'); toggleDropdown('analysis-dropdown')">
+              <i class="fa fa-pie-chart mr-2"></i>持仓分析
+            </button>
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('deep-analysis'); toggleDropdown('analysis-dropdown')">
+              <i class="fa fa-bar-chart mr-2"></i>基金深度分析
+            </button>
+            <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm" onclick="switchTab('recommend'); toggleDropdown('analysis-dropdown')">
+              <i class="fa fa-thumbs-up mr-2"></i>个性化推荐
+            </button>
+          </div>
+        </div>
         <button id="tab-share" class="px-4 py-3 text-xs sm:text-sm font-medium text-gray-600 hover:text-primary min-w-max border-b-2 border-transparent hover:border-primary transition-all duration-300" onclick="switchTab('share')">
           <i class="fa fa-share-alt mr-1 sm:mr-2"></i>
           <span class="hidden sm:inline">投资组合分享</span>
