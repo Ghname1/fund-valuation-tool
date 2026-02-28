@@ -1846,6 +1846,9 @@ window.calculateInvestment = calculateInvestment;
 window.generateInvestmentChart = generateInvestmentChart;
 window.resetCalculator = resetCalculator;
 
+// 导航下拉菜单相关函数
+window.toggleDropdown = toggleDropdown;
+
 // 持仓分析相关函数
 window.refreshAnalysis = refreshAnalysis;
 window.calculateAnalysis = calculateAnalysis;
